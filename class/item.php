@@ -9,9 +9,10 @@ class Item
   public $itemInventoryType = -1; // 在庫タイプ
   public $normalDeliveryDateId; // 在庫あり時納期管理番号
   public $backorderDeliveryDateId; // 在庫切れ時納期管理番号
-  public $pointRate;
-  public $pointRateStart;
-  public $pointRateEnd;
+  // public $pointRate;
+  // public $pointRateStart;
+  // public $pointRateEnd;
+  public $point;
   public $genreId; //ディレクトリID
   public $catalogId; //カタログID(JAN)
   public $catalogIdExemptionReason;

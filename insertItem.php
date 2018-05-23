@@ -4,6 +4,11 @@ require_once('config.php');
 require_once('util.php');
 require_once('class/item.php');
 require_once('class/image.php');
+require_once('class/point.php');
+
+ini_set('xdebug.var_display_max_children', -1);
+ini_set('xdebug.var_display_max_data', -1);
+ini_set('xdebug.var_display_max_depth', -1);
 
 
 /***
@@ -24,12 +29,18 @@ $item->normalDeliveryDateId = 1000; // RMSのデフォルト設定「1～2日以
 $item->backorderDeliveryDateId = 1000; // RMSのデフォルト設定「1～2日以内に発送予定（店舗休業日を除く）」
 
 // ポイント倍率設定
-$item->pointRate = 2; // 変倍率
-$item->pointRateStart = new DateTime('now');
-$item->pointRateStart->modify('+2 hours +30 minutes'); //現在時刻から2時間30分後を変倍の開始に
-$item->pointRateStart->setTimeZone( new DateTimeZone('Asia/Tokyo'));
-$item->pointRateEnd = clone $item->pointRateStart;
-$item->pointRateEnd->modify('+60 day -1hour'); // 変倍開始から60日後を変倍の終了に
+$point = new Point();
+$point->pointRate = 2; // 変倍率
+$point->pointRateStart = new DateTime('now');
+$point->pointRateStart->modify('+2 hours +30 minutes'); //現在時刻から2時間30分後を変倍の開始に
+$point->pointRateStart->setTimeZone( new DateTimeZone('Asia/Tokyo'));
+$point->pointRateEnd = clone $point->pointRateStart;
+$point->pointRateEnd->modify('+60 day -1hour'); // 変倍開始から60日後を変倍の終了に
+// 時刻を文字列化
+$point->pointRateStart = $point->pointRateStart->format(DATE_RFC3339);
+$point->pointRateEnd = $point->pointRateEnd->format(DATE_RFC3339);
+
+$item->point = $point;
 
 // ディレクトリID カタログID(JAN)設定
 $item->genreId = 209124; //本・雑誌・コミック>PC・システム開発>プログラミング>PHP  この値は連関表から取得
@@ -83,6 +94,8 @@ function insertItem($item) {
   
   $reqXml = _createRequestXml($item);
   
+  return array($reqXml, $httpStatusCode, $response);
+  
   curl_setopt($ch, CURLOPT_POSTFIELDS,     $reqXml);
   curl_setopt($ch, CURLOPT_POST,           true);
   curl_setopt($ch, CURLOPT_TIMEOUT,        30);
@@ -99,6 +112,31 @@ function insertItem($item) {
   return array($reqXml, $httpStatusCode, $response);
 }
 
+/**
+ * Convert an array to XML
+ * @param array $array
+ * @param SimpleXMLElement $xml
+ */
+function arrayToXml($array, &$xml, $parentKeyName){
+  var_dump($array);
+  foreach ($array as $key => $value) {
+    var_dump($parentKeyName);
+    if(is_array($value)){
+      if(is_int($key)){
+          // $key = "e";
+          if(!empty($parentKeyName)) {
+            $key = substr($parentKeyName, 0, -1); //親のelement名の単数系に
+          }
+      }
+      $label = $xml->addChild($key);
+      arrayToXml($value, $label, $key);
+    }
+    else {
+      $xml->addChild($key, $value);
+    }
+  }
+}
+
 /*
 * APIのリクエストXMLを作成
 * 注意. xmlの要素の順番を変えると400でwrong formatエラーが返却されるクソ仕様。
@@ -106,8 +144,19 @@ function insertItem($item) {
 */
 function _createRequestXml($item) {
   // 時刻関連を文字列に変換
-  $_pointRateStart = $item->pointRateStart->format(DATE_RFC3339);
-  $_pointRateEnd = $item->pointRateEnd->format(DATE_RFC3339);
+  // $_pointRateStart = $item->pointRateStart->format(DATE_RFC3339);
+  // $_pointRateEnd = $item->pointRateEnd->format(DATE_RFC3339);
+  
+  $json = json_encode($item);
+  $array = (array)json_decode($json, true);
+
+  // $obj = array_flip($obj);
+  $xml = new SimpleXMLElement('<request/>');
+  // array_walk_recursive($obj, array ($xml, 'addChild'));
+  
+  arrayToXml($array, $xml);
+  
+  return $xml->asXML();
   
   $xml  = '<?xml version="1.0" encoding="UTF-8"?>'
       . 
@@ -166,6 +215,16 @@ function _createRequestXml($item) {
     </item>
   </itemInsertRequest>
 </request>";
+  
+  $xml = simplexml_load_string($xml);
+  $json = json_encode($xml);
+  $array = json_decode($json,TRUE);
+  
+  echo "<pre>";
+  var_dump($array);
+  echo "</pre>";
+  
+  return $array;
   
   return $xml;
 }
