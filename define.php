@@ -10,5 +10,7 @@ define("RMS_CATALOG_EXCEPTION_REASON_NO_JAN", 5);
 define("RMS_IMAGE_BASE_URL", "https://image.rakuten.co.jp/");
 
 // 在庫設定関連
-define("RMS_ITEM_INVENTORY_TYPE_NORMAL", 1); // 
+define("RMS_ITEM_INVENTORY_TYPE_NORMAL", 1); // 通常在庫設定
+define("RMS_ITEM_INVENTORY_TYPE_VARIATION", 2); // 項目選択肢別在庫設定 
+
 
