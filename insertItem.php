@@ -4,6 +4,13 @@ require_once('config.php');
 require_once('util.php');
 require_once('class/item.php');
 require_once('class/image.php');
+require_once('class/point.php');
+require_once('class/itemInventory.php');
+require_once('class/inventory.php');
+
+ini_set('xdebug.var_display_max_children', -1);
+ini_set('xdebug.var_display_max_data', -1);
+ini_set('xdebug.var_display_max_depth', -1);
 
 
 /***
@@ -17,19 +24,32 @@ $item->itemNumber = $item->itemUrl;
 $item->itemName = 'テスト商品につき購入不可_' . $item->itemUrl;
 $item->itemPrice = 100; 
 
-// 在庫関連
-$item->itemInventoryType = RMS_ITEM_INVENTORY_TYPE_NORMAL;
-$item->inventoryCount = 1; //在庫数
-$item->normalDeliveryDateId = 1000; // RMSのデフォルト設定「1～2日以内に発送予定（店舗休業日を除く）」
-$item->backorderDeliveryDateId = 1000; // RMSのデフォルト設定「1～2日以内に発送予定（店舗休業日を除く）」
+// 在庫関連設定
+$itemInventory = new ItemInventory();
+$itemInventory->inventoryType = RMS_ITEM_INVENTORY_TYPE_NORMAL; // 通常在庫設定
+$itemInventory->inventoryQuantityFlag = 1;
+// 個別の在庫
+$inventory = new Inventory();
+$inventory->inventoryCount = 1;
+$inventory->normalDeliveryDateId = 1000; // RMSのデフォルト設定「1～2日以内に発送予定（店舗休業日を除く）」
+$inventory->backorderDeliveryDateId = 1000; // RMSのデフォルト設定「1～2日以内に発送予定（店舗休業日を除く）」
+// 在庫リストに個別の在庫を格納
+$itemInventory->inventories[] = $inventory;
+// 商品に在庫情報をセット
+$item->itemInventory = $itemInventory;
 
 // ポイント倍率設定
-$item->pointRate = 2; // 変倍率
-$item->pointRateStart = new DateTime('now');
-$item->pointRateStart->modify('+2 hours +30 minutes'); //現在時刻から2時間30分後を変倍の開始に
-$item->pointRateStart->setTimeZone( new DateTimeZone('Asia/Tokyo'));
-$item->pointRateEnd = clone $item->pointRateStart;
-$item->pointRateEnd->modify('+60 day -1hour'); // 変倍開始から60日後を変倍の終了に
+$point = new Point();
+$point->pointRate = 2; //変倍率
+$pointRateStart = new DateTime('now');
+$pointRateStart->modify('+2 hours +30 minutes'); //現在時刻から2時間30分後を変倍の開始に
+$pointRateStart->setTimeZone( new DateTimeZone('Asia/Tokyo'));
+$pointRateEnd = clone $pointRateStart;
+$pointRateEnd->modify('+60 day -1hour'); // 変倍開始から60日後を変倍の終了に
+$point->pointRateStart = $pointRateStart->format(DATE_RFC3339); // 変倍開始時期を文字列でセット
+$point->pointRateEnd = $pointRateEnd->format(DATE_RFC3339); // 変倍終了時期を文字列でセット
+// 商品にポイント倍率をセット
+$item->point = $point;
 
 // ディレクトリID カタログID(JAN)設定
 $item->genreId = 209124; //本・雑誌・コミック>PC・システム開発>プログラミング>PHP  この値は連関表から取得
@@ -42,33 +62,33 @@ for($i = 0; $i < 2; $i++) {
   $image = new Image();
   $image->imageUrl = RMS_IMAGE_BASE_URL . RMS_SETTLEMENT_SHOP_URL . "/cabinet/images/rrrz_01.jpg";
   $image->imageAlt = "$item->itemName";
-  $item->images[] = $image;
+  $item->images[] = $image; // 商品に画像をセット
 }
 
+// 説明文関連設定
 $item->descriptionForPC = '結構html使える';
 $item->descriptionForMobile = '一部html使用可能';
 $item->descriptionForSmartPhone = '一部html使用可能';
 $item->catchCopyForPC = 'PC用キャッチコピー';
 $item->catchCopyForMobile = 'モバイル用キャッチコピー';
+
+// 送料など設定
 $item->isIncludedPostage = 0; // 送料無料フラグ (0:送料別 1:送料込)
 $item->postage = 108; // 個別送料
 $item->isIncludedCashOnDeliveryPostage = 1; // 1:代引料込 (デフォルト0:代引き料別)
 
 
-/***
- * 楽天へAPIを使って登録
- * */
+// 楽天へRMS APIを使って登録
 list($reqXml, $httpStatusCode, $response) = insertItem($item);
 
 
 
-
-
-
+//////////////// 関数群 ////////////////////
 
 /*
 * APIのリクエストを行う
 * xmlを作って curlでpostしてる
+* @param 挿入したい商品情報のクラスオブジェクト
 * @return リクエストしたxml文字列, httpステータスコード, レスポンス文字列(xmlで返ってくる)
 */
 function insertItem($item) {
@@ -82,6 +102,8 @@ function insertItem($item) {
   $ch = curl_init($url);
   
   $reqXml = _createRequestXml($item);
+  
+  // return array($reqXml, $httpStatusCode, $response);
   
   curl_setopt($ch, CURLOPT_POSTFIELDS,     $reqXml);
   curl_setopt($ch, CURLOPT_POST,           true);
@@ -100,75 +122,60 @@ function insertItem($item) {
 }
 
 /*
-* APIのリクエストXMLを作成
+* 渡したclassオブジェクトからリクエストのXMLを自動生成する
 * 注意. xmlの要素の順番を変えると400でwrong formatエラーが返却されるクソ仕様。
 *       item.getでxmlの要素の順番を確認しながら行うと無難(API仕様書でも良いが間違ってないという保証はない)
 */
 function _createRequestXml($item) {
-  // 時刻関連を文字列に変換
-  $_pointRateStart = $item->pointRateStart->format(DATE_RFC3339);
-  $_pointRateEnd = $item->pointRateEnd->format(DATE_RFC3339);
+
+  // リクエストXMLのガワを作る
+  $rootXml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><request/>');
+  $itemInsertRequestXml = $rootXml->addChild('itemInsertRequest');
+  $itemXml = $itemInsertRequestXml->addChild('item');
   
-  $xml  = '<?xml version="1.0" encoding="UTF-8"?>'
-      . 
-      "
-<request>
-  <itemInsertRequest>
-    <item>
-      <itemUrl>$item->itemUrl</itemUrl>
-      <itemNumber>$item->itemNumber</itemNumber>
-      <itemName>$item->itemName</itemName>
-      <itemPrice>$item->itemPrice</itemPrice>
-      <genreId>$item->genreId</genreId>
-      <catalogId>$item->catalogId</catalogId>";
+  // 受け取った商品情報オブジェクトをarrayに変換
+  $array = _convertClassObjectToArray($item);
   
-  //画像があれば画像情報をリクエストに挿入
-  if(!empty($item->images)) {
-    $xml = $xml . "<images>";
-    foreach($item->images as $image) {
-      $xml = $xml . 
-      "
-      <image>
-        <imageUrl>$image->imageUrl</imageUrl>
-        <imageAlt>$image->imageAlt</imageAlt>
-      </image>";
-    }
-    $xml = $xml . "
-    </images>";
-  }
+  _arrayToXml($array, $itemXml);  // リクエストのXMLをarray情報から作成する
   
-  $xml = $xml . 
-    "
-      <descriptionForPC>$item->descriptionForPC</descriptionForPC>
-      <descriptionForMobile>$item->descriptionForMobile</descriptionForMobile>
-      <descriptionForSmartPhone>$item->descriptionForSmartPhone</descriptionForSmartPhone>
-      <catchCopyForPC>$item->catchCopyForPC</catchCopyForPC>
-      <catchCopyForMobile>$item->catchCopyForMobile</catchCopyForMobile>
-      <isIncludedPostage>$item->isIncludedPostage</isIncludedPostage>
-      <isIncludedCashOnDeliveryPostage>$item->isIncludedCashOnDeliveryPostage</isIncludedCashOnDeliveryPostage>
-      <postage>$item->postage</postage>
-      <point>
-        <pointRate>$item->pointRate</pointRate>
-        <pointRateStart>$_pointRateStart</pointRateStart>
-        <pointRateEnd>$_pointRateEnd</pointRateEnd>
-      </point>
-      <itemInventory>
-        <inventoryType>$item->itemInventoryType</inventoryType>
-        <inventories>
-          <inventory>
-            <inventoryCount>$item->inventoryCount</inventoryCount>
-            <normalDeliveryDateId>$item->normalDeliveryDateId</normalDeliveryDateId>
-            <backorderDeliveryDateId>$item->backorderDeliveryDateId</backorderDeliveryDateId>
-          </inventory>
-        </inventories>
-        <inventoryQuantityFlag>1</inventoryQuantityFlag>
-      </itemInventory>
-    </item>
-  </itemInsertRequest>
-</request>";
-  
-  return $xml;
+  return $rootXml->asXML(); // リクエストのXMLを返却する
 }
+
+/**
+ * Convert an array to XML
+ * @param array $array
+ * @param SimpleXMLElement $xml
+ * @param array $parentKeyName (その要素が配列で、子要素を親要素の単数形にして登録したい時指定)
+ */
+function _arrayToXml($array, &$xml, $parentKeyName=null){
+  foreach ($array as $key => $value) {
+    if(is_array($value)){
+      if(is_int($key)){
+          if(!empty($parentKeyName)) {
+            // 親要素が存在する時、子要素を親要素の単数形の名前にして登録
+            $key = singularByPlural($parentKeyName);
+          }
+      }
+      $label = $xml->addChild($key);
+      _arrayToXml($value, $label, $key);
+    }
+    else if(!is_null($value)){
+      // 値がセットされている時だけxml要素に追加
+      $xml->addChild($key, $value);
+    }
+  }
+}
+
+/**
+ * Convert an classObject to array
+ */
+function _convertClassObjectToArray($object) {
+  $json = json_encode($object);
+  return (array)json_decode($json, true);
+}
+
+
+//////////////// 結果をブラウザで表示 ////////////////////
 
 ?>
 

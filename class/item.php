@@ -2,29 +2,26 @@
 
 class Item
 {
-  public $itemUrl = '';
-  public $itemNumber = '';
-  public $itemName = '';
-  public $itemPrice = 0;
-  public $itemInventoryType = -1; // 在庫タイプ
-  public $normalDeliveryDateId; // 在庫あり時納期管理番号
-  public $backorderDeliveryDateId; // 在庫切れ時納期管理番号
-  public $pointRate;
-  public $pointRateStart;
-  public $pointRateEnd;
+  // xmlで自動生成するときに順番通りに要素が並ぶ
+  // RMS APIは順番を組み替えると400が返ってくるので注意すること
+  public $itemUrl;
+  public $itemNumber;
+  public $itemName;
+  public $itemPrice;
   public $genreId; //ディレクトリID
   public $catalogId; //カタログID(JAN)
   public $catalogIdExemptionReason;
-  public $catchCopyForPC = '';
-  public $catchCopyForMobile = '';
-  public $isIncludedPostage = 0;
-  public $postage = -1;
-  public $isIncludedCashOnDeliveryPostage = 0;
-  public $inventoryCount = 0; //在庫数
-  public $images = array(); // 画像のリスト Imageクラスのオブジェクトが入る
-  public $descriptionForMobile = '';
-  public $descriptionForSmartPhone = '';
-  public $descriptionForPC = '';
+  public $images; // 画像のリスト Imageクラスのオブジェクトをarrayで追加していく
+  public $descriptionForPC;
+  public $descriptionForMobile;
+  public $descriptionForSmartPhone;
+  public $catchCopyForPC;
+  public $catchCopyForMobile;
+  public $isIncludedPostage;
+  public $isIncludedCashOnDeliveryPostage;
+  public $postage;
+  public $point; // Pointクラスのオブジェクトが入る
+  public $itemInventory; // ItemInventoryクラスのオブジェクトが入る
   
   function __construct() {
       
