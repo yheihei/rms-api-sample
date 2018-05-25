@@ -3,6 +3,9 @@
 // 楽天API エンドポイント関連
 define("RMS_API_ITEM_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/item/insert');
 define("RMS_API_ITEM_GET", 'https://api.rms.rakuten.co.jp/es/1.0/item/get');
+define("RMS_API_CABINET_FOLDERS_GET", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/folders/get');
+define("RMS_API_CABINET_FILE_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/file/insert');
+
 
 // 商品登録(ItemAPI)設定関連
 define("RMS_CATALOG_EXCEPTION_REASON_NO_JAN", 5);
