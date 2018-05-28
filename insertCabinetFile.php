@@ -9,13 +9,14 @@ ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
+echo "hoge";
 
 /***
  * 画像情報のセット
  * */
 
 // 送信したいファイルの情報設定
-$uploadFileInfo = new CabinetUploadFileInfo(__DIR__ . '/image/test_image.jpg'); // 送信したいファイルの絶対パスを指定
+$uploadFileInfo = new CabinetUploadFileInfo(__DIR__ . '/image/rrrz_01.jpg'); // 送信したいファイルの絶対パスを指定
 
 // var_dump($uploadFileInfo);
 
@@ -25,7 +26,7 @@ $cabinetFileSetting->fileName = 'test_' . randomStr(3) . '_' . date_format(new D
 $cabinetFileSetting->folderId = 0; // 0は基本フォルダ
 $cabinetFileSetting->filePath = $cabinetFileSetting->fileName . "." . $uploadFileInfo->extension; // 拡張子つける
 // NOTE: $uploadFileInfo->extensionがnullの場合対応していない拡張子のファイルなのでエラーを起こした方が良い
-$cabinetFileSetting->overWrite = "true"; // overWriteがtrueかつfilePathの指定がある場合、filePathをキーとして画像情報を上書きすることができます
+$cabinetFileSetting->overWrite = 1; // overWriteがtrueかつfilePathの指定がある場合、filePathをキーとして画像情報を上書きすることができます
 
 // 楽天へRMS APIを使って画像アップロード
 list($reqXml, $httpStatusCode, $response) = cabinetFileInsert($cabinetFileSetting, $uploadFileInfo);
@@ -48,13 +49,28 @@ function cabinetFileInsert($cabinetFileSetting, $uploadFileInfo) {
   
   $reqXml = _createRequestXml($cabinetFileSetting);
   
-  $file = '/home/ubuntu/workspace/rmsapi/image/test_image.jpg';    //アップロードするテキストファイル 
+  // stringからDOM構築
+  $dom = DOMDocument::loadXML($reqXml);
+  
+  // encodingが指定されてないと&#x30C6;&#x30B9;&#x30C8;みたいになるので何か指定する
+  // ログ目的なら問答無用でUTF-8とかに統一してもいいと思う
+  if (!$dom->encoding) {
+      $dom->encoding = 'UTF-8';
+  }
+  
+  // 整形して出力するフラグ
+  $dom->formatOutput = true;
+  
+  // 文字列で取得
+  $reqXml = $dom->saveXML();
+  
+  $file = $uploadFileInfo->filePath;    //アップロードするテキストファイル 
   $files = array(
       'file' => $file
   );
   
   $params = array(
-      'xml' => '$reqXml'
+      'xml' => $reqXml
   );
   
   $response = httpPost($url, $params, $files);
@@ -148,7 +164,7 @@ function httpPost($url, $params, $files = []){
 
         //ファイルアップロードを伴う場合、multipartで送信
 
-        $boundary = '---------------------------'.time();
+        $boundary = '---------------------------'.'yheihogehogeyhei';
 
         $contentType = "Content-Type: multipart/form-data; boundary=" . $boundary;
 
@@ -156,22 +172,22 @@ function httpPost($url, $params, $files = []){
 
         foreach($params as $key => $value) {
 
-            $data .= "--$boundary" . CRLF;
+            $data .= "--$boundary" . "\r\n";
 
-            $data .= 'Content-Disposition: form-data; name=' . $key . CRLF . CRLF;
+            $data .= 'Content-Disposition: form-data; name=' . '"'. $key . '"' . "\r\n" . "\r\n";
 
-            $data .= $value . CRLF;
+            $data .= $value . "\r\n";
 
         }
 
         foreach($files as $key => $file) {
-            $data .= "--$boundary" . CRLF;
-            $data .= sprintf('Content-Disposition: form-data; name="%s"; filename="%s"%s', $key, basename($file), CRLF);
-            $data .= 'Content-Type: application/octet-stream'. CRLF;
-            $data .= file_get_contents($file) . CRLF;
+            $data .= "--$boundary" . "\r\n";
+            $data .= sprintf('Content-Disposition: form-data; name="%s"; filename="%s"%s', $key, basename($file), "\r\n");
+            $data .= 'Content-Type: image/jpeg'. "\r\n";
+            $data .= file_get_contents($file) . "\r\n";
         }
 
-        $data .= "--$boundary--" . CRLF;
+        $data .= "--$boundary--" . "\r\n";
 
     } else {
 
@@ -184,10 +200,14 @@ function httpPost($url, $params, $files = []){
     }
 
     $headers = array(
-
+        "Connection: keep-alive",
+        "Proxy-Connection: keep-alive",
         $contentType,
         'Content-Length: '.strlen($data),
-        "Authorization: ESA {$authkey}"
+        "Authorization: ESA {$authkey}",
+        // "Accept: */*",
+        // "Accept-Encoding: gzip,deflate",
+        // "Accept-Language: ja,en-US;q=0.8,en;q=0.6"
     );
     $header = implode("\r\n", $headers);
     var_dump($header);
@@ -297,6 +317,7 @@ function _convertClassObjectToArray($object) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
+          error_log(print_r($response, true));
           $xml = htmlspecialchars($response, ENT_QUOTES);
           echo '$response:' . $xml; ?>
       </pre>

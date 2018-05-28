@@ -47,10 +47,14 @@ RMS管理画面から色々情報設定して、その商品を取得すると�
 表示されたxmlを下記にぶち込むと、整形してくれるので尚わかりやすい。    
 http://tm-webtools.com/Tools/XMLBeauty
 
-## 受注API
+# R-CabinetAPI（CabinetAPI）
+
+ドラフト作成。実動作不可。現在楽天に問い合わせ中。
+
+# 受注API
 
 coming soon...
 
-## 決済API
+# 決済API
 
 coming soon...
