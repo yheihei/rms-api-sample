@@ -1,6 +1,9 @@
 # 概要
-難解なことで有名なRakuten RMS Web APIのPHPのサンプル集です。色んなAPIを叩いてRMSのデータを取得したり更新できるようになります。
-RMS作業自動化ツールなどのヒントになれば幸いです。
+難解なことで有名なRakuten RMS Web APIのPHPのサンプル集です。
+色んなAPIを叩いてRMSのデータを取得したり更新できるようになります。  
+
+極力特別なパッケージは使用せず、デフォルトのPHPの機能で動作させる様に心がけています。
+RMSを使ったツール開発のヒントになれば幸いです。
 
 # 使い方
 ## config.phpを設定する
@@ -44,10 +47,14 @@ RMS管理画面から色々情報設定して、その商品を取得すると�
 表示されたxmlを下記にぶち込むと、整形してくれるので尚わかりやすい。    
 http://tm-webtools.com/Tools/XMLBeauty
 
-## 受注API
+# R-CabinetAPI（CabinetAPI）
+
+ドラフト作成。実動作不可。現在楽天に問い合わせ中。
+
+# 受注API
 
 coming soon...
 
-## 決済API
+# 決済API
 
 coming soon...
