@@ -51,9 +51,14 @@ http://tm-webtools.com/Tools/XMLBeauty
 
 ドラフト作成。実動作不可。現在楽天に問い合わせ中。
 
-# 受注API
+# 受注API(OrderAPI)
 
-coming soon...
+※ご使用上の注意  
+受注APIではSOAP Clientを使用しています。echo phpinfo();にて  
+ご使用のサーバーでSOAP Clientがenabledになっているかご確認ください。
+
+## getOrder.php
+
 
 # 決済API
 
