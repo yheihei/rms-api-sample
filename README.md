@@ -53,11 +53,11 @@ http://tm-webtools.com/Tools/XMLBeauty
 
 # 受注API(OrderAPI)
 
-※ご使用上の注意  
-受注APIではSOAP Clientを使用しています。echo phpinfo();にて  
-ご使用のサーバーでSOAP Clientがenabledになっているかご確認ください。
-
 ## getOrder.php
+getOrder APIを用いて、受注商品情報を取得する。  
+処理の流れは
+1. GetOrderRequestModelに取得したい受注の条件を記載
+2. それをAPIコールする関数getOrder()に渡す
 
 
 # 決済API

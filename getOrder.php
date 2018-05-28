@@ -2,11 +2,9 @@
 
 require_once('config.php');
 require_once('util.php');
-require_once('class/item.php');
-require_once('class/image.php');
-require_once('class/point.php');
-require_once('class/itemInventory.php');
-require_once('class/inventory.php');
+require_once('class/getOrderRequestModel.php');
+require_once('class/orderSearchModel.php');
+require_once('class/userAuthModel.php');
 
 ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
@@ -16,9 +14,24 @@ ini_set('xdebug.var_display_max_depth', -1);
  * 受注情報の検索情報セット
  * */
 
+// 受注情報を設定
+$orderRequestModel = new GetOrderRequestModel();
+$orderRequestModel->isOrderNumberOnlyFlg = 0; // false:受注情報を取得
 
+// 受注検索モデルを設定
+$orderSearchModel = new OrderSearchModel();
+$orderSearchModel->dateType = RMS_GET_ORDER_DATE_TYPE_ORDER;
+$endDate = new DateTime('now');
+$endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
+$endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
+$startDate = clone $endDate;
+$startDate->modify('-30 day'); // 30日前を開始に
+$orderSearchModel->startDate = $startDate->format("Y-m-d");
+$orderSearchModel->endDate = $endDate->format("Y-m-d");
+//受注検索モデルを受注情報にセット
+$orderRequestModel->orderSearchModel = $orderSearchModel;
 
-// 楽天へRMS APIを使って登録
+// 楽天へRMS APIを使って送信
 list($reqXml, $httpStatusCode, $response) = getOrder($orderRequestModel);
 
 
@@ -31,51 +44,25 @@ list($reqXml, $httpStatusCode, $response) = getOrder($orderRequestModel);
 * @param 取得したい受注情報のクラスオブジェクト
 * @return リクエストしたxml文字列, httpステータスコード, レスポンス文字列(xmlで返ってくる)
 */
-function getOrder($item) {
-  // $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
-  // $header = array(
-  //   "Content-Type: text/xml;charset=UTF-8",
-  //   "Authorization: ESA {$authkey}",
-  // );
+function getOrder($orderRequestModel) {
 
   $url = RMS_API_ORDER_GET;
   $ch = curl_init($url);
   
-  // $reqXml = _createRequestXml($item);
+  $userAuthModel = new UserAuthModel();
+  $userAuthModel->authKey = "ESA " . base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
+  $userAuthModel->shopUrl = RMS_SETTLEMENT_SHOP_URL;
+  $userAuthModel->userName  = RMS_SETTLEMENT_USER_NAME;
   
-  $authkey = "ESA " . base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
-  $shop_url = RMS_SETTLEMENT_SHOP_URL;
-  $user_name = RMS_SETTLEMENT_USER_NAME;
-  $reqXml = "<?xml version='1.0' encoding='UTF-8'?>
-  <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:ns1='http://orderapi.rms.rakuten.co.jp/rms/mall/order/api/ws'>
-  <SOAP-ENV:Body>
-  <ns1:getOrder>
-  <arg0>
-    <authKey>{$authkey}</authKey>
-    <shopUrl>{$shop_url}</shopUrl>
-    <userName>{$user_name}</userName>
-  </arg0>
-  <arg1>
-    <isOrderNumberOnlyFlg>false</isOrderNumberOnlyFlg>
-    <orderSearchModel>
-      <dateType>1</dateType>
-      <startDate>2018-05-24</startDate>
-      <endDate>2018-05-30</endDate>
-      <orderType>1</orderType>
-    </orderSearchModel>
-  </arg1>
-  </ns1:getOrder>
-  </SOAP-ENV:Body>
-  </SOAP-ENV:Envelope>";
-  $header = array(
-    "Content-Type: text/xml;charset=UTF-8",
-  );
-  
+  $reqXml = _createRequestSOAPXml(array($userAuthModel, $orderRequestModel));
   // return array($reqXml, $httpStatusCode, $response);
-  
   curl_setopt($ch, CURLOPT_POSTFIELDS,     $reqXml);
   curl_setopt($ch, CURLOPT_POST,           true);
   curl_setopt($ch, CURLOPT_TIMEOUT,        30);
+  
+  $header = array(
+    "Content-Type: text/xml;charset=UTF-8",
+  );
   curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //返り値を 文字列で返します
   $response = curl_exec($ch);
@@ -90,23 +77,50 @@ function getOrder($item) {
 }
 
 /*
-* 渡したclassオブジェクトからリクエストのXMLを自動生成する
+* 渡したclassオブジェクトのリストからリクエストのSOAP XMLを自動生成する
 * 注意. xmlの要素の順番を変えると400でwrong formatエラーが返却されるクソ仕様。
-*       item.getでxmlの要素の順番を確認しながら行うと無難(API仕様書でも良いが間違ってないという保証はない)
 */
-function _createRequestXml($item) {
+function _createRequestSOAPXml($objects) {
+  
+  $paramXmls = array();
+  foreach($objects as $index => $object) {
+    // オブジェクトをxmlに変換
+    $paramXmls[] = _createPartXml($object, $index);
+  }
+
+  $reqXml = "<?xml version='1.0' encoding='UTF-8'?>
+  <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/' xmlns:ns1='http://orderapi.rms.rakuten.co.jp/rms/mall/order/api/ws'>
+  <SOAP-ENV:Body>
+  <ns1:getOrder>";
+  
+  foreach($paramXmls as $paramXml) {
+    // 各パラメータxmlを挿入
+    $reqXml = $reqXml . $paramXml;
+  }
+  
+  $reqXml = $reqXml . "</ns1:getOrder>
+  </SOAP-ENV:Body>
+  </SOAP-ENV:Envelope>";
+  
+  return $reqXml; // リクエストのXMLを返却する
+}
+
+/*
+* 渡したclassオブジェクトからXMLを自動生成する
+* 注意. xmlの要素の順番を変えると400でwrong formatエラーが返却されるクソ仕様。
+*/
+function _createPartXml($object, $arrayNumber) {
 
   // リクエストXMLのガワを作る
-  $rootXml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><request/>');
-  $itemInsertRequestXml = $rootXml->addChild('itemInsertRequest');
-  $itemXml = $itemInsertRequestXml->addChild('item');
+  $rootXml = new SimpleXMLElement("<arg{$arrayNumber}/>");
   
-  // 受け取った商品情報オブジェクトをarrayに変換
-  $array = _convertClassObjectToArray($item);
+  // 受け取ったオブジェクトをarrayに変換
+  $array = _convertClassObjectToArray($object);
   
-  _arrayToXml($array, $itemXml);  // リクエストのXMLをarray情報から作成する
+  _arrayToXml($array, $rootXml);  // リクエストのXMLをarray情報から作成する
   
-  return $rootXml->asXML(); // リクエストのXMLを返却する
+  $returnPartXml = str_replace('<?xml version="1.0"?>', '', $rootXml->asXML());
+  return $returnPartXml; // XMLを返却する
 }
 
 /**

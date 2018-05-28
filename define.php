@@ -17,4 +17,7 @@ define("RMS_IMAGE_BASE_URL", "https://image.rakuten.co.jp/");
 define("RMS_ITEM_INVENTORY_TYPE_NORMAL", 1); // 通常在庫設定
 define("RMS_ITEM_INVENTORY_TYPE_VARIATION", 2); // 項目選択肢別在庫設定 
 
+// 受注関連設定
+define("RMS_GET_ORDER_DATE_TYPE_ORDER", 1); // 注文日で取得
+
 
