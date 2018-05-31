@@ -6,7 +6,15 @@ class OrderSearchModel {
   public $dateType; // 1:注文日
   public $startDate;
   public $endDate;
-  public $orderType; //販売種別
+  public $orderType = array(1,2,3,4,5,6); //販売種別全て　
+  /*
+  1	通常購入	　
+  2	オークション	　
+  3	共同購入	　
+  4	定期購入	　
+  5	頒布会	　
+  6	予約商品
+  */
   
   function __construct() {
 

@@ -10,3 +10,4 @@ define("RMS_LICENSE_KEY", "licenseKeyを入れる");
 define("RMS_SETTLEMENT_USER_NAME", "ユーザIDを入れる");
 define("RMS_SETTLEMENT_SHOP_URL", "店舗URLを入れる");
 define("RMS_SETTLEMENT_AUTH", "認証キーを入れる");
+define("RMS_TEST_MAIL_ADDRESS", "テスト購入者ユーザーのメールアドレスを入力。getOrder APIなどで確認できる");
