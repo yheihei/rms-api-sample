@@ -108,3 +108,39 @@ function decode_callback($matches) {
   }
   return $escaped;
 }
+
+// var_dumpを整形して表示
+function customVarDump($object) {
+	echo "<pre>";
+  var_dump($object);
+  echo "</pre>";
+}
+
+/**
+ * Returns the HTTP Status code of $response
+ * @param string $response
+ * @return string
+ */
+function extract_response_http_code($response) {
+    $tmp = explode('\n', $response);
+    $array = explode(' ', $tmp[0]);
+
+    return $array[1];
+}
+
+// インデントや改行をつけた綺麗なxmlのstringを返す
+function returnFormattedXmlString ($xmlString) {
+	// stringからDOM構築
+	$dom = DOMDocument::loadXML($xmlString);
+	
+	// encodingが指定されてないと&#x30C6;&#x30B9;&#x30C8;みたいになるので何か指定する
+	if (!$dom->encoding) {
+	  $dom->encoding = 'UTF-8';
+	}
+	
+	// 整形して出力するフラグ
+	$dom->formatOutput = true;
+	
+	// 文字列で取得
+	return $dom->saveXML();
+}

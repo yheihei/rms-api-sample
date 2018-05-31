@@ -20,6 +20,7 @@ class Item
   public $isIncludedPostage;
   public $isIncludedCashOnDeliveryPostage;
   public $postage;
+  public $isDepot; //倉庫指定
   public $point; // Pointクラスのオブジェクトが入る
   public $itemInventory; // ItemInventoryクラスのオブジェクトが入る
   

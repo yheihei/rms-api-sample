@@ -100,4 +100,114 @@ getOrder APIを用いて、受注商品情報を取得する。
 
 # 決済API
 
-coming soon...
+＊SOAP Clientを使ってSOAP形式でPOSTをしています。お使いのサーバーでphp_info()などをechoしてSOAP Clientがenableになっているか確認してください。
+SOAP Clientが使えない場合、xmlを独自に構築してPOSTする必要があります。xmlの作例例もサンプルコードの中に含んでおりますので、ご確認ください。
+
+## authori.php
+authoriのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
+カードステータスが「1(受注したが決済に関して何もしていない状態？楽天に定義がない)」の受注番号を指定し、カードステータスを「オーソリ済み」にする非同期API。  
+処理の結果はすぐには反映されず、authori前にgetRCCSRequestId APIで取得したリクエストIDを元に  
+getRCCSResultで取得する必要がある。カードステータスは、受注APIのgetOrderで返却される受注商品のcardStatusでも確認できる。
+
+## authoriCancel.php
+authoriCancelのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
+カードステータスが「オーソリ済」の受注番号を指定し、カードステータスを「オーソリ取消済み」にする非同期API。  
+処理の結果はすぐには反映されず、authoriCancel前にgetRCCSRequestId APIで取得したリクエストIDを元に  
+getRCCSResultで取得する必要がある。カードステータスは、受注APIのgetOrderで返却される受注商品のcardStatusでも確認できる。
+
+## sales.php
+salesのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
+カードステータスが「オーソリ済」の受注番号を指定し、カードステータスを「売上請求済み」にする非同期API。  
+処理の結果はすぐには反映されず、sales前にgetRCCSRequestId APIで取得したリクエストIDを元に  
+getRCCSResultで取得する必要がある。カードステータスは、受注APIのgetOrderで返却される受注商品のcardStatusでも確認できる。
+
+## salesCancel.php
+salesCancelのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
+カードステータスが「売上請求済み」の受注番号を指定し、カードステータスを「売上請求取消済み」にする非同期API。  
+処理の結果はすぐには反映されず、salesCancel前にgetRCCSRequestId APIで取得したリクエストIDを元に  
+getRCCSResultで取得する必要がある。カードステータスは、受注APIのgetOrderで返却される受注商品のcardStatusでも確認できる。
+
+## getRCCSResult.php
+getRCCSResultのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
+決済API全般の非同期APIを叩く際に使ったリクエストIDを入れて本APIを叩くと、非同期処理結果がどうなったかが返却される。  
+例えば、下記のような形で返却される。レスポンスをvar_dumpしている。
+
+```
+
+class stdClass#3 (1) {
+  public $result =>
+  class stdClass#4 (3) {
+    public $errorCode =>
+    string(12) "RCCS_N00-000"
+    public $message =>
+    string(12) "正常終了"
+    public $rccsRequestStatus =>
+    class stdClass#5 (1) {
+      public $UiRCCSRequestStatusModel =>
+      class stdClass#6 (9) {
+        public $count =>
+        int(1)
+        public $errorCode =>
+        string(12) "RCCS_N00-000"
+        public $kind =>
+        int(1)
+        public $message =>
+        string(12) "正常終了"
+        public $rccsResults =>
+        class stdClass#7 (1) {
+          public $UiRCCSResultModel =>
+          class stdClass#8 (19) {
+            public $approvalNumber =>
+            string(7) "0000000"
+            public $brandName =>
+            string(4) "VISA"
+            public $cardImstCount =>
+            int(0)
+            public $cardNo =>
+            string(19) "****-****-****-6941"
+            public $cardStatus =>
+            int(13)
+            public $ccsErrorCode =>
+            string(6) "210G55"
+            public $ccsErrorCodeDetail =>
+            NULL
+            public $companyName =>
+            string(15) "楽天カード"
+            public $errorCode =>
+            string(12) "RCCS_E22-822"
+            public $eventDate =>
+            string(25) "2018-05-31T00:00:00+09:00"
+            public $expYM =>
+            string(7) "2020/03"
+            public $helpItem =>
+            string(0) ""
+            public $message =>
+            string(105) "限度額オーバー：R-Card Plus クレジットサポートセンターへお問合せください。"
+            public $orderNumber =>
+            string(24) "338459-20180531-00000703"
+            public $ownerName =>
+            string(12) "TARO RAKUTEN"
+            public $payType =>
+            int(0)
+            public $price =>
+            int(208)
+            public $regDate =>
+            string(25) "2018-05-31T10:10:14+09:00"
+            public $transactionId =>
+            string(32) "18053110094638800185672603000100"
+          }
+        }
+        public $requestId =>
+        int(167316941)
+        public $startDate =>
+        string(25) "2018-05-31T10:09:43+09:00"
+        public $status =>
+        int(3)
+        public $timeStamp =>
+        string(25) "2018-05-31T10:10:14+09:00"
+      }
+    }
+  }
+}
+
+```
