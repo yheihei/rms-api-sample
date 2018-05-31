@@ -2,76 +2,52 @@
 
 require_once('config.php');
 require_once('util.php');
-require_once('class/getOrderRequestModel.php');
-require_once('class/orderSearchModel.php');
 require_once('class/userAuthModel.php');
+require_once('class/changeStatusRequestModel.php');
+require_once('class/orderStatusModel.php');
 
 ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
 /***
- * 受注情報の検索情報セット
+ * OrderAPIの非同期のリクエスト確認
+ * $requestIdはシステム内に保存しておくこと。
  * */
+// 結果を確認したいリクエストIDを入力(arrayで複数可能)
+$requestIds = array(584649535, 584618680);
 
-// 受注情報を設定
-$orderRequestModel = new GetOrderRequestModel();
-$orderRequestModel->isOrderNumberOnlyFlg = 0; // false:受注情報を取得
-
-// 受注検索モデルを設定
-$orderSearchModel = new OrderSearchModel();
-$orderSearchModel->dateType = RMS_GET_ORDER_DATE_TYPE_ORDER;
-$endDate = new DateTime('now');
-$endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
-$endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
-$startDate = clone $endDate;
-$startDate->modify('-30 day'); // 30日前を開始に
-$orderSearchModel->startDate = $startDate->format("Y-m-d");
-$orderSearchModel->endDate = $endDate->format("Y-m-d");
-//受注検索モデルを受注情報にセット
-$orderRequestModel->orderSearchModel = $orderSearchModel;
 
 // 楽天へRMS APIを使って送信
-// list($reqXml, $httpStatusCode, $response) = getOrder($orderRequestModel);
-// 楽天へRMS APIを使って送信
-list($request, $httpStatusCode, $response) = getOrder($orderRequestModel);
+list($request, $httpStatusCode, $response) = getResult($requestIds);
 
 //////////////// 関数群 ////////////////////
 
 /***
- * 受注情報の取得 getOrder　[同期]
+ * 非同期リクエストの結果確認 getResult　[同期]
+ * $requestIdはシステム内に保存しておくこと。
  * 
  * POST例は下記。本例ではSOAPクライアントを使っているが、自前でやりたい場合は下記のxmlを組み立ててPOSTすること
  
 <?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="http://orderapi.rms.rakuten.co.jp/rms/mall/order/api/ws">
   <SOAP-ENV:Body>
-    <ns1:getOrder>
+    <ns1:getResult>
       <arg0>
         <authKey>ESA hogekey</authKey>
         <shopUrl>hogeshop</shopUrl>
         <userName>hogename</userName>
       </arg0>
       <arg1>
-        <isOrderNumberOnlyFlg>false</isOrderNumberOnlyFlg>
-        <orderSearchModel>
-          <dateType>1</dateType>
-          <endDate>2018-06-01</endDate>
-          <orderType>1</orderType>
-          <orderType>2</orderType>
-          <orderType>3</orderType>
-          <orderType>4</orderType>
-          <orderType>5</orderType>
-          <orderType>6</orderType>
-          <startDate>2018-05-02</startDate>
-        </orderSearchModel>
+        <requestId>584649535</requestId>
+        <requestId>584618680</requestId>
       </arg1>
-    </ns1:getOrder>
+    </ns1:getResult>
   </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>
   
  * */
-function getOrder($orderRequestModel) {
+function getResult($requestIds) {
 
   //パラメータセット
   $userAuthModel = new UserAuthModel();
@@ -79,7 +55,7 @@ function getOrder($orderRequestModel) {
   $userAuthModel->shopUrl = RMS_SETTLEMENT_SHOP_URL;
   $userAuthModel->userName  = RMS_SETTLEMENT_USER_NAME;
   $params = array('arg0' => _convertClassObjectToArray($userAuthModel),
-    'arg1' => _convertClassObjectToArray($orderRequestModel));
+    'arg1' => $requestIds);
   // customVarDump($params);
   
   //エラーを無視するエラーハンドラに切り替える（実行後は元に戻す）
@@ -97,7 +73,7 @@ function getOrder($orderRequestModel) {
   
   try{
     //SOAP通信実行
-    $result = $client->getOrder($params);
+    $result = $client->getResult($params);
     // customVarDump($result);
   } catch (SoapFault $e) {
     // customVarDump($e);
@@ -106,39 +82,13 @@ function getOrder($orderRequestModel) {
   // customVarDump($client->__getLastRequest());
   // customVarDump($client->__getLastResponse());
   
-  // return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $result);
-  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $client->__getLastResponse());
+  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $result);
 }
 
 // エラーハンドラ関数
 function myErrorHandler($errno, $errstr, $errfile, $errline)
 {
   
-}
-
-/**
- * Convert an array to XML
- * @param array $array
- * @param SimpleXMLElement $xml
- * @param array $parentKeyName (その要素が配列で、子要素を親要素の単数形にして登録したい時指定)
- */
-function _arrayToXml($array, &$xml, $parentKeyName=null){
-  foreach ($array as $key => $value) {
-    if(is_array($value)){
-      if(is_int($key)){
-          if(!empty($parentKeyName)) {
-            // 親要素が存在する時、子要素を親要素の単数形の名前にして登録
-            $key = singularByPlural($parentKeyName);
-          }
-      }
-      $label = $xml->addChild($key);
-      _arrayToXml($value, $label, $key);
-    }
-    else if(!is_null($value)){
-      // 値がセットされている時だけxml要素に追加
-      $xml->addChild($key, $value);
-    }
-  }
 }
 
 /**
@@ -157,7 +107,7 @@ function _convertClassObjectToArray($object) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>getOrder | OrderAPI</title>
+    <title>getResult | OrderAPI</title>
     <meta charset="UTF-8">
     <style>
       pre,code {
@@ -172,7 +122,7 @@ function _convertClassObjectToArray($object) {
     <div style="width:100%;">
       <h1>リクエスト</h1>
       <pre>
-        <?php echo htmlspecialchars(returnFormattedXmlString($request), ENT_QUOTES); ?>
+        <?php echo htmlspecialchars(returnFormattedXmlString($request), ENT_QUOTES);; ?>
       </pre>
       <h1>レスポンス結果</h1>
       <h2>HTTP Status code</h2>
@@ -182,7 +132,7 @@ function _convertClassObjectToArray($object) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          echo htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
+          echo customVarDump($response);
           ?>
       </pre>
     </div>

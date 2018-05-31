@@ -87,6 +87,114 @@ getOrder APIを用いて、受注商品情報を取得する。
 1. GetOrderRequestModelに取得したい受注の条件を記載
 2. それをAPIコールする関数getOrder()に渡す
 
+## changeStatus.php
+changeStatus APIを用いて、受注のステータスを変更する
+例えば、下記のようなものを文字列で指定。
+
+```
+  ・新規受付
+  ・発送前入金待ち
+  ・発送待ち
+  ・発送後入金待ち
+  ・処理済
+  ・保留
+  ※または、店舗様設定独自ステータス
+
+```
+
+処理の流れは下記。
+
+1. getRequestId APIを用いて、非同期処理のリクエストIDを取得
+2. 取得したリクエストIDを用いてchangeStatus APIを叩き、特定の受注番号のステータスを変更
+
+なお、changeStatus APIは非同期処理のため、処理結果を取得するにはリクエストIDを用いて
+getResult APIを叩く必要がある。
+
+## updateOrder.php
+updateOrder APIを用いて、受注情報を更新する。処理の流れは下記。
+
+1. getRequestId APIを用いて、非同期処理のリクエストIDを取得
+2. 取得したリクエストIDを用いてupdateOrder APIを叩き、特定の受注番号の情報を変更
+(changeStatus相当の動作も仕様書上はできるようだが、動作確認は未。受注ステータスを変更するだけならchangeStatusを使ってください)
+
+本サンプルでは愚直にクラスを作って一つ一つ入れていきましたが、  
+必須項目が50項目以上ありチマチマ入れるのは得策ではありません。  
+getOrderで得られるxmlの<orderModel>配下をパースしてarrayにし、  
+それを$updateOrderRequestModel->orderModelのarrayに挿入して、  
+本ファイルのupdateOrder関数にぶち込むことをオススメします  
+
+## getResult.php
+getResultのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
+OrderAPI全般の非同期APIを叩く際に使ったリクエストIDを入れて本APIを叩くと、非同期処理結果がどうなったかが返却される。  
+例えば、下記のような形で返却される。レスポンスをvar_dumpしている。
+
+```
+
+cclass stdClass#3 (1) {
+  public $return =>
+  class stdClass#4 (3) {
+    public $errorCode =>
+    string(7) "N00-000"
+    public $message =>
+    string(12) "正常終了"
+    public $asyncResultModel =>
+    array(2) {
+      [0] =>
+      class stdClass#5 (9) {
+        public $complete =>
+        string(24) "338459-20180531-00000720"
+        public $count =>
+        int(1)
+        public $errorCode =>
+        string(7) "N00-000"
+        public $kind =>
+        int(1)
+        public $message =>
+        string(12) "正常終了"
+        public $requestId =>
+        int(584649535)
+        public $startDate =>
+        string(25) "2018-05-31T16:45:19+09:00"
+        public $status =>
+        int(3)
+        public $timeStamp =>
+        string(25) "2018-05-31T16:45:48+09:00"
+      }
+      [1] =>
+      class stdClass#6 (9) {
+        public $count =>
+        int(1)
+        public $errorCode =>
+        string(7) "W00-000"
+        public $kind =>
+        int(4)
+        public $message =>
+        string(15) "エラーあり"
+        public $requestId =>
+        int(584618680)
+        public $startDate =>
+        string(25) "2018-05-31T16:17:53+09:00"
+        public $status =>
+        int(3)
+        public $timeStamp =>
+        string(25) "2018-05-31T16:19:05+09:00"
+        public $unitError =>
+        class stdClass#7 (3) {
+          public $errorCode =>
+          string(7) "E04-011"
+          public $message =>
+          string(48) "更新対象の商品情報が存在しません"
+          public $orderKey =>
+          string(24) "338459-20180531-00000726"
+        }
+      }
+    }
+  }
+}
+
+```
+
+
 # 在庫API（InventoryAPI）(動きません)
 
 ## updateVariationInventory.php
