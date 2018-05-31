@@ -5,7 +5,7 @@ require_once('util.php');
 require_once('class/item.php');
 
 $item = new Item();
-$item->itemUrl = "7jfisbuy"; // ここを適宜変えると取ってくる商品を変えられる
+$item->itemUrl = "testrrrz_8ev_20180524100825"; // ここを適宜変えると取ってくる商品を変えられる
 // $item->itemUrl = "rrrz_05";
 
 list($httpStatusCode, $response) = getItem($item);

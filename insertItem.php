@@ -38,6 +38,9 @@ $itemInventory->inventories[] = $inventory;
 // 商品に在庫情報をセット
 $item->itemInventory = $itemInventory;
 
+// 倉庫指定
+$item->isDepot = 1; // true(1)で倉庫行き、false(0)で販売中
+
 // ポイント倍率設定
 $point = new Point();
 $point->pointRate = 2; //変倍率

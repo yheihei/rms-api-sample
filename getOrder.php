@@ -179,7 +179,7 @@ function _convertClassObjectToArray($object) {
     <div style="width:100%;">
       <h1>リクエスト</h1>
       <pre>
-        <?php echo htmlspecialchars($reqXml, ENT_QUOTES);; ?>
+        <?php echo htmlspecialchars(returnFormattedXmlString($reqXml), ENT_QUOTES);; ?>
       </pre>
       <h1>レスポンス結果</h1>
       <h2>HTTP Status code</h2>
@@ -189,7 +189,7 @@ function _convertClassObjectToArray($object) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          echo htmlspecialchars($response, ENT_QUOTES);
+          echo htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
           ?>
       </pre>
       <?php 

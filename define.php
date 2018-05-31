@@ -9,7 +9,7 @@ define("RMS_API_CABINET_FILE_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/cabi
 define("RMS_API_ORDER_GET", 'https://api.rms.rakuten.co.jp/es/1.0/order/ws');
 define("RMS_API_INVENTORY_SOAP_ADDRESS", 'https://api.rms.rakuten.co.jp/es/1.0/inventory/ws');
 define("RMS_API_INVENTORY_SOAP_WSDL", 'https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi');
-
+define("RMS_API_PAYMENT_SOAP_WSDL", 'https://orderapi.rms.rakuten.co.jp/rccsapi-services/RCCSApiService?wsdl');
 
 // 商品登録(ItemAPI)設定関連
 define("RMS_CATALOG_EXCEPTION_REASON_NO_JAN", 5);
