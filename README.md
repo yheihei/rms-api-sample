@@ -81,6 +81,10 @@ http://tm-webtools.com/Tools/XMLBeauty
 
 # 受注API(OrderAPI)
 
+＊SOAP Clientを使ってSOAP形式でPOSTをしています。お使いのサーバーでphp_info()などをechoしてSOAP Clientがenableになっているか確認してください。
+SOAP Clientが使えない場合、xmlを独自に構築してPOSTする必要があります。xmlの作例例もサンプルコードの中に含んでおりますので、ご確認ください。
+
+
 ## getOrder.php
 getOrder APIを用いて、受注商品情報を取得する。  
 処理の流れは
@@ -195,15 +199,23 @@ cclass stdClass#3 (1) {
 ```
 
 
-# 在庫API（InventoryAPI）(動きません)
+# 在庫API（InventoryAPI）
+
+＊SOAP Clientを使ってSOAP形式でPOSTをしています。お使いのサーバーでphp_info()などをechoしてSOAP Clientがenableになっているか確認してください。
+SOAP Clientが使えない場合、xmlを独自に構築してPOSTする必要があります。xmlの作例例もサンプルコードの中に含んでおりますので、ご確認ください。
+
 
 ## updateVariationInventory.php
-在庫タイプが項目選択肢別在庫設定の場合の在庫を横軸縦軸単位で変更するAPIサンプル。
-必須項目がないとかエラーが出て動作してません。  （なんの必須項目かぐらい出してくれ楽天）
+updateInventoryExternalのAPIを叩いて、在庫タイプが項目選択肢別在庫設定の場合の在庫を横軸縦軸単位で変更するAPIサンプル。
+例えば、「Sサイズ/赤」の商品だけ在庫数を50にするなどの操作ができる。  
+数あるバリエーションの中の一部バリエーション商品の在庫数をいじる場合はこれを使う。  
+
+＊item.updateでもできるが、item.updateだと全てのバリエーションに在庫数をセットして更新しないといけない。  
 
 ## getInventoryExternal.php
-商品URLを指定して在庫を取得するAPIサンプル。  
-検索エラーが発生しましたと言うエラーが出て動作してません。(コード表を見ると「時間を空けて再度お試しください」と書いてある。嘘をつけ)
+getInventoryExternalのAPIを叩いて、商品URLを指定して在庫を取得するAPIサンプル。  
+商品のitemUrlをリストに詰めてコールすると、在庫タイプ：通常/項目選択肢別の全ての在庫数などの情報を返してくれる。
+
 
 
 # 決済API

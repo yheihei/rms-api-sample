@@ -11,128 +11,94 @@ ini_set('xdebug.var_display_max_depth', -1);
 
 /***
  * 在庫情報の検索情報セット
+ * 商品のitemUrlをリストに詰めてコールすると、在庫タイプ：通常/項目選択肢別の全ての在庫数などの情報を返してくれる
+ * 
  * */
 
 // 受注情報を設定
 $getRequestExternalModel = new GetRequestExternalModel();
-$getRequestExternalModel->itemUrl = '7jfisbuy';
+$getRequestExternalModel->itemUrl = array('7jfisbuy'); // 取得したい商品のitemUrlをリストで入れる
 
 // 楽天へRMS APIを使って送信
-list($reqXml, $httpStatusCode, $response) = getInventoryExternal($getRequestExternalModel);
+list($request, $httpStatusCode, $response) = getInventoryExternal($getRequestExternalModel);
 
 
 
 //////////////// 関数群 ////////////////////
 
-/*
-* APIのリクエストを行う
-* xmlを作って curlでpostしてる
-* @param 取得したい受注情報のクラスオブジェクト
-* @return リクエストしたxml文字列, httpステータスコード, レスポンス文字列(xmlで返ってくる)
-*/
+/***
+ * 在庫情報取得 getInventoryExternal　[同期]
+ * itemUrlを指定して在庫情報を取得する機能です。
+ * 
+ * @return リクエストしたxml文字列, httpステータスコード, レスポンスオブジェクト
+ * 
+ * POST例は下記。本例ではSOAPクライアントを使っているが、自前でやりたい場合は下記のxmlを組み立ててPOSTすること
+ 
+<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns1="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity" xmlns:ns2="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns3="java:language_builtins.lang">
+  <SOAP-ENV:Body>
+    <ns2:getInventoryExternal>
+      <ns2:externalUserAuthModel>
+        <ns1:authKey>ESA hogekey</ns1:authKey>
+        <ns1:userName>hogename</ns1:userName>
+        <ns1:shopUrl>hogeshop</ns1:shopUrl>
+      </ns2:externalUserAuthModel>
+      <ns2:getRequestExternalModel>
+        <ns1:inventorySearchRange xsi:nil="true"/>
+        <ns1:itemUrl>
+          <ns3:string>7jfisbuy</ns3:string>
+        </ns1:itemUrl>
+      </ns2:getRequestExternalModel>
+    </ns2:getInventoryExternal>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
+  
+ * */
 function getInventoryExternal($getRequestExternalModel) {
 
-  $url = RMS_API_INVENTORY_SOAP_ADDRESS;
-  $ch = curl_init($url);
-  
+  //パラメータセット
   $userAuthModel = new ExternalUserAuthModel();
   $userAuthModel->authKey = "ESA " . base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
   $userAuthModel->shopUrl = RMS_SETTLEMENT_SHOP_URL;
   $userAuthModel->userName  = RMS_SETTLEMENT_USER_NAME;
+  $params = array('externalUserAuthModel' => _convertClassObjectToArray($userAuthModel),
+    'getRequestExternalModel' => _convertClassObjectToArray($getRequestExternalModel));
+  // customVarDump($params);
   
-  $reqXml = _createRequestSOAPXml(array("externalUserAuthModel" => $userAuthModel, "getRequestExternalModel" => $getRequestExternalModel));
-  
-  // return array($reqXml, $httpStatusCode, $response);
-  curl_setopt($ch, CURLOPT_POSTFIELDS,     $reqXml);
-  curl_setopt($ch, CURLOPT_POST,           true);
-  curl_setopt($ch, CURLOPT_TIMEOUT,        30);
-  
-  $header = array(
-    "Content-Type: text/xml;charset=UTF-8",
-  );
-  curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); //返り値を 文字列で返します
-  $response = curl_exec($ch);
-  if(curl_error($ch)){
-    $response = curl_error($ch);
+  //エラーを無視するエラーハンドラに切り替える（実行後は元に戻す）
+  set_error_handler("myErrorHandler");
+  try{
+    // WSDLファイルを読み込む 楽天サーバーの見えるところに置かれてないので、自サーバーの適当なところに置いて読む
+    $client = new SoapClient(__DIR__ ."/wsdl/inventoryapi.wsdl", array('trace' => 1 ));
+    //エラーハンドラ回復
+    restore_error_handler();
+  } catch (Exception $e) {
+    //エラーハンドラ回復
+    restore_error_handler();
+    echo $e->getMessage();
+    return array(null, "400", $e->getMessage()); // 適切に対処した方が良い
+    //WSDLファイルの読み込みに失敗した場合の処理
   }
   
-  $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  try{
+    //SOAP通信実行
+    $result = $client->getInventoryExternal($params);
+    // customVarDump($result);
+  } catch (SoapFault $e) {
+    // customVarDump($e);
+    echo $e->getMessage();
+    //SOAP通信の実行に失敗した場合の処理
+  }
+  // customVarDump($client->__getLastRequest());
+  // customVarDump($client->__getLastResponse());
   
-  curl_close($ch);
-  return array($reqXml, $httpStatusCode, $response);
+  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $result);
 }
 
-/*
-* 渡したclassオブジェクトのリストからリクエストのSOAP XMLを自動生成する
-* 注意. xmlの要素の順番を変えると400でwrong formatエラーが返却されるクソ仕様。
-*/
-function _createRequestSOAPXml($objects) {
+// エラーハンドラ関数
+function myErrorHandler($errno, $errstr, $errfile, $errline)
+{
   
-  $paramXmls = array();
-  foreach($objects as $index => $object) {
-    // オブジェクトをxmlに変換
-    $paramXmls[] = _createPartXml($object, $index);
-  }
-
-  $reqXml = "<?xml version='1.0' encoding='UTF-8'?>
-  <SOAP-ENV:Envelope xmlns:SOAP-ENV='http://schemas.xmlsoap.org/soap/envelope/'>
-  <SOAP-ENV:Body>
-  <ns1:getInventoryExternal xmlns:ns1='https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi'>";
-  
-  foreach($paramXmls as $paramXml) {
-    // 各パラメータxmlを挿入
-    $reqXml = $reqXml . $paramXml;
-  }
-  
-  $reqXml = $reqXml . "</ns1:getInventoryExternal>
-  </SOAP-ENV:Body>
-  </SOAP-ENV:Envelope>";
-  
-  return $reqXml; // リクエストのXMLを返却する
-}
-
-/*
-* 渡したclassオブジェクトからXMLを自動生成する
-* 注意. xmlの要素の順番を変えると400でwrong formatエラーが返却されるクソ仕様。
-*/
-function _createPartXml($object, $arrayNumber) {
-
-  // リクエストXMLのガワを作る
-  $rootXml = new SimpleXMLElement("<{$arrayNumber}/>");
-  
-  // 受け取ったオブジェクトをarrayに変換
-  $array = _convertClassObjectToArray($object);
-  
-  _arrayToXml($array, $rootXml);  // リクエストのXMLをarray情報から作成する
-  
-  $returnPartXml = str_replace('<?xml version="1.0"?>', '', $rootXml->asXML());
-  return $returnPartXml; // XMLを返却する
-}
-
-/**
- * Convert an array to XML
- * @param array $array
- * @param SimpleXMLElement $xml
- * @param array $parentKeyName (その要素が配列で、子要素を親要素の単数形にして登録したい時指定)
- */
-function _arrayToXml($array, &$xml, $parentKeyName=null){
-  foreach ($array as $key => $value) {
-    if(is_array($value)){
-      if(is_int($key)){
-          if(!empty($parentKeyName)) {
-            // 親要素が存在する時、子要素を親要素の単数形の名前にして登録
-            $key = singularByPlural($parentKeyName);
-          }
-      }
-      $label = $xml->addChild($key);
-      _arrayToXml($value, $label, $key);
-    }
-    else if(!is_null($value)){
-      // 値がセットされている時だけxml要素に追加
-      $xml->addChild($key, $value);
-    }
-  }
 }
 
 /**
@@ -151,7 +117,7 @@ function _convertClassObjectToArray($object) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>getInventory | InventoryAPI</title>
+    <title>getInventoryExternal | OrderAPI</title>
     <meta charset="UTF-8">
     <style>
       pre,code {
@@ -166,42 +132,18 @@ function _convertClassObjectToArray($object) {
     <div style="width:100%;">
       <h1>リクエスト</h1>
       <pre>
-        <?php echo htmlspecialchars($reqXml, ENT_QUOTES);; ?>
+        <?php echo htmlspecialchars(returnFormattedXmlString($request), ENT_QUOTES);; ?>
       </pre>
       <h1>レスポンス結果</h1>
       <h2>HTTP Status code</h2>
       <pre>
-        <?php echo $httpStatusCode; ?>
+        <?php customVarDump($httpStatusCode); ?>
       </pre>
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          echo htmlspecialchars($response, ENT_QUOTES);
+          echo customVarDump($response);
           ?>
-      </pre>
-      <?php 
-        // レスポンスをxmlのオブジェクトにパースする
-        if ($httpStatusCode == 200) {
-          $clean_xml = str_ireplace(['S:', 'ns2:'], '', $response);
-          // echo htmlspecialchars($clean_xml, ENT_QUOTES);
-          ?>
-          <pre>
-          <?php 
-            // echo $clean_xml;
-          ?>
-          </pre>
-      <?php
-          $responseBody = get_object_vars(simplexml_load_string($clean_xml));
-        }
-      ?>
-      <h2>GetOrderResponseModel.message</h2>
-      <pre>
-        <?php var_dump($responseBody['Body']->getOrderResponse->return->errorCode); ?>
-        <?php var_dump($responseBody['Body']->getOrderResponse->return->message); ?>
-      </pre>
-      <h2>GetOrderResponseModel</h2>
-      <pre>
-        <?php var_dump($responseBody['Body']->getOrderResponse->return->orderModel); ?>
       </pre>
     </div>
   </body>

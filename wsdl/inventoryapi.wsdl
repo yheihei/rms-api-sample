@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions  xmlns:tns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+  xmlns:wsr="http://www.openuri.org/2002/10/soap/reliability/"
+  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+  xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+  xmlns:soap12enc="http://www.w3.org/2003/05/soap-encoding"
+  xmlns:conv="http://www.openuri.org/2002/04/wsdl/conversation/"
+  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+  xmlns:s="http://www.w3.org/2001/XMLSchema"
+  xmlns="http://schemas.xmlsoap.org/wsdl/"
+  targetNamespace="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi">
+ <types>
+  <xsd:schema    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:stns="java:language_builtins.lang"
+    elementFormDefault="qualified"
+    attributeFormDefault="qualified"
+    targetNamespace="java:language_builtins.lang">
+   <xsd:complexType     name="ArrayOfString">
+    <xsd:sequence>
+     <xsd:element       type="xsd:string"
+       name="string"
+       minOccurs="0"
+       maxOccurs="unbounded"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+  </xsd:schema>
+  <xsd:schema    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:stns="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+    elementFormDefault="qualified"
+    attributeFormDefault="qualified"
+    targetNamespace="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity">
+   <xsd:import     namespace="java:language_builtins.lang">
+   </xsd:import>
+   <xsd:complexType     name="ArrayOfGetResponseExternalItem">
+    <xsd:sequence>
+     <xsd:element       type="stns:GetResponseExternalItem"
+       name="GetResponseExternalItem"
+       minOccurs="0"
+       maxOccurs="unbounded"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="ArrayOfGetResponseExternalItemDetail">
+    <xsd:sequence>
+     <xsd:element       type="stns:GetResponseExternalItemDetail"
+       name="GetResponseExternalItemDetail"
+       minOccurs="0"
+       maxOccurs="unbounded"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="ArrayOfUpdateRequestExternalItem">
+    <xsd:sequence>
+     <xsd:element       type="stns:UpdateRequestExternalItem"
+       name="UpdateRequestExternalItem"
+       minOccurs="0"
+       maxOccurs="unbounded"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="ArrayOfUpdateResponseExternalItem">
+    <xsd:sequence>
+     <xsd:element       type="stns:UpdateResponseExternalItem"
+       name="UpdateResponseExternalItem"
+       minOccurs="0"
+       maxOccurs="unbounded"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="UpdateSingleRequestExternalItem">
+    <xsd:sequence>
+     <xsd:element       type="stns:UpdateRequestExternalItem"
+       name="UpdateRequestExternalItem"
+       minOccurs="0"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="ExternalUserAuthModel">
+    <xsd:complexContent>
+     <xsd:extension       base="stns:UserAuthBase">
+      <xsd:sequence>
+       <xsd:element         type="xsd:string"
+         name="shopUrl"
+         minOccurs="1"
+         maxOccurs="1"
+         nillable="true">
+       </xsd:element>
+      </xsd:sequence>
+     </xsd:extension>
+    </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType     name="GetRequestExternalModel">
+    <xsd:complexContent>
+     <xsd:extension       base="stns:RequestModel">
+      <xsd:sequence>
+       <xsd:element         type="xsd:string"
+         name="inventorySearchRange"
+         minOccurs="1"
+         maxOccurs="1"
+         nillable="true">
+       </xsd:element>
+       <xsd:element         xmlns:tp="java:language_builtins.lang"
+         type="tp:ArrayOfString"
+         name="itemUrl"
+         minOccurs="1"
+         maxOccurs="1"
+         nillable="true">
+       </xsd:element>
+      </xsd:sequence>
+     </xsd:extension>
+    </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType     name="GetResponseExternalItem">
+    <xsd:sequence>
+     <xsd:element       type="stns:ArrayOfGetResponseExternalItemDetail"
+       name="getResponseExternalItemDetail"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="inventoryType"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="itemNumber"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="itemUrl"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="nokoriThreshold"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="restTypeFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="GetResponseExternalItemDetail">
+    <xsd:sequence>
+     <xsd:element       type="xsd:string"
+       name="HChoiceName"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="VChoiceName"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="inventoryBackFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="inventoryCount"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="lackDeliveryId"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="normalDeliveryId"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="orderFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="orderSalesFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="GetResponseExternalModel">
+    <xsd:complexContent>
+     <xsd:extension       base="stns:ResponseModel">
+      <xsd:sequence>
+       <xsd:element         type="stns:ArrayOfGetResponseExternalItem"
+         name="getResponseExternalItem"
+         minOccurs="1"
+         maxOccurs="1"
+         nillable="true">
+       </xsd:element>
+      </xsd:sequence>
+     </xsd:extension>
+    </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType     name="RequestModel">
+   </xsd:complexType>
+   <xsd:complexType     name="ResponseModel">
+    <xsd:sequence>
+     <xsd:element       type="xsd:string"
+       name="errCode"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="errMessage"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="UpdateRequestExternalItem">
+    <xsd:sequence>
+     <xsd:element       type="xsd:string"
+       name="HChoiceName"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="VChoiceName"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="inventory"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="inventoryBackFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="inventoryType"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="inventoryUpdateMode"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="itemUrl"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:boolean"
+       name="lackDeliveryDeleteFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="lackDeliveryId"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="nokoriThreshold"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:boolean"
+       name="normalDeliveryDeleteFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="normalDeliveryId"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="orderFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="orderSalesFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+     <xsd:element       type="xsd:int"
+       name="restTypeFlag"
+       minOccurs="1"
+       maxOccurs="1">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="UpdateRequestExternalModel">
+    <xsd:complexContent>
+     <xsd:extension       base="stns:RequestModel">
+      <xsd:sequence>
+       <xsd:element         type="stns:ArrayOfUpdateRequestExternalItem"
+         name="updateRequestExternalItem"
+         minOccurs="1"
+         maxOccurs="1"
+         nillable="true">
+       </xsd:element>
+      </xsd:sequence>
+     </xsd:extension>
+    </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType     name="UpdateSingleRequestExternalModel">
+    <xsd:complexContent>
+     <xsd:extension       base="stns:RequestModel">
+      <xsd:sequence>
+       <xsd:element         type="stns:UpdateSingleRequestExternalItem"
+         name="updateRequestExternalItem"
+         minOccurs="1"
+         maxOccurs="1"
+         nillable="true">
+       </xsd:element>
+      </xsd:sequence>
+     </xsd:extension>
+    </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType     name="UpdateResponseExternalItem">
+    <xsd:sequence>
+     <xsd:element       type="xsd:string"
+       name="HChoiceName"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="VChoiceName"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="itemErrCode"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="itemErrMessage"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="itemUrl"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+   <xsd:complexType     name="UpdateResponseExternalModel">
+    <xsd:complexContent>
+     <xsd:extension       base="stns:ResponseModel">
+      <xsd:sequence>
+       <xsd:element         type="stns:ArrayOfUpdateResponseExternalItem"
+         name="updateResponseExternalItem"
+         minOccurs="1"
+         maxOccurs="1"
+         nillable="true">
+       </xsd:element>
+      </xsd:sequence>
+     </xsd:extension>
+    </xsd:complexContent>
+   </xsd:complexType>
+   <xsd:complexType     name="UserAuthBase">
+    <xsd:sequence>
+     <xsd:element       type="xsd:string"
+       name="authKey"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+     <xsd:element       type="xsd:string"
+       name="userName"
+       minOccurs="1"
+       maxOccurs="1"
+       nillable="true">
+     </xsd:element>
+    </xsd:sequence>
+   </xsd:complexType>
+  </xsd:schema>
+  <xsd:schema    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:stns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+    elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    targetNamespace="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi">
+   <xsd:import     namespace="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity">
+   </xsd:import>
+   <xsd:element     name="getInventoryExternal">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:ExternalUserAuthModel"
+        name="externalUserAuthModel">
+      </xsd:element>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:GetRequestExternalModel"
+        name="getRequestExternalModel">
+      </xsd:element>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element     name="getInventoryExternalResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:GetResponseExternalModel"
+        name="result">
+      </xsd:element>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element     name="updateInventoryExternal">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:ExternalUserAuthModel"
+        name="externalUserAuthModel">
+      </xsd:element>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:UpdateRequestExternalModel"
+        name="updateRequestExternalModel">
+      </xsd:element>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element     name="updateInventoryExternalResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:UpdateResponseExternalModel"
+        name="result">
+      </xsd:element>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element     name="updateSingleInventoryExternal">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:ExternalUserAuthModel"
+        name="externalUserAuthModel">
+      </xsd:element>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:UpdateSingleRequestExternalModel"
+        name="updateRequestExternalModel">
+      </xsd:element>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+   <xsd:element     name="updateSingleInventoryExternalResponse">
+    <xsd:complexType>
+     <xsd:sequence>
+      <xsd:element        xmlns:tp="java:jp.co.rakuten.rms.mall.inventoryapi.v1.model.entity"
+        type="tp:UpdateResponseExternalModel"
+        name="result">
+      </xsd:element>
+     </xsd:sequence>
+    </xsd:complexType>
+   </xsd:element>
+  </xsd:schema>
+ </types>
+ <message   name="getInventoryExternal">
+  <part    xmlns:partns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+    name="parameters"
+    element="partns:getInventoryExternal">
+  </part>
+ </message>
+ <message   name="getInventoryExternalResponse">
+  <part    xmlns:partns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+    name="parameters"
+    element="partns:getInventoryExternalResponse">
+  </part>
+ </message>
+ <message   name="updateInventoryExternal">
+  <part    xmlns:partns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+    name="parameters"
+    element="partns:updateInventoryExternal">
+  </part>
+ </message>
+ <message   name="updateInventoryExternalResponse">
+  <part    xmlns:partns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+    name="parameters"
+    element="partns:updateInventoryExternalResponse">
+  </part>
+ </message>
+ <message   name="updateSingleInventoryExternal">
+  <part    xmlns:partns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+    name="parameters"
+    element="partns:updateSingleInventoryExternal">
+  </part>
+ </message>
+ <message   name="updateSingleInventoryExternalResponse">
+  <part    xmlns:partns="https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi"
+    name="parameters"
+    element="partns:updateSingleInventoryExternalResponse">
+  </part>
+ </message>
+ <portType   name="inventoryapiPort">
+  <operation    name="getInventoryExternal">
+   <input     message="tns:getInventoryExternal">
+   </input>
+   <output     message="tns:getInventoryExternalResponse">
+   </output>
+  </operation>
+  <operation    name="updateInventoryExternal">
+   <input     message="tns:updateInventoryExternal">
+   </input>
+   <output     message="tns:updateInventoryExternalResponse">
+   </output>
+  </operation>
+  <operation    name="updateSingleInventoryExternal">
+   <input     message="tns:updateSingleInventoryExternal">
+   </input>
+   <output     message="tns:updateSingleInventoryExternalResponse">
+   </output>
+  </operation>
+ </portType>
+ <binding   type="tns:inventoryapiPort"
+   name="inventoryapiPort">
+   <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http" />
+  <operation    name="getInventoryExternal">
+    <soap:operation style="document" soapAction="" />
+   <input>
+     <soap:body use="literal" />
+   </input>
+   <output>
+     <soap:body use="literal" />
+   </output>
+  </operation>
+  <operation    name="updateInventoryExternal">
+    <soap:operation style="document" soapAction="" />
+   <input>
+     <soap:body use="literal" />
+   </input>
+   <output>
+     <soap:body use="literal" />
+   </output>
+  </operation>
+  <operation    name="updateSingleInventoryExternal">
+    <soap:operation style="document" soapAction="" />
+   <input>
+     <soap:body use="literal" />
+   </input>
+   <output>
+     <soap:body use="literal" />
+   </output>
+  </operation>
+ </binding>
+ <service   name="inventoryapi">
+  <port    name="inventoryapiPort"
+    binding="tns:inventoryapiPort">
+    <soap:address location="https://api.rms.rakuten.co.jp/es/1.0/inventory/ws" />
+  </port>
+ </service>
+</definitions>
