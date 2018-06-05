@@ -4,8 +4,13 @@
 define("RMS_API_ITEM_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/item/insert');
 define("RMS_API_ITEM_UPDATE", 'https://api.rms.rakuten.co.jp/es/1.0/item/update');
 define("RMS_API_ITEM_GET", 'https://api.rms.rakuten.co.jp/es/1.0/item/get');
+define("RMS_API_CABINET_USAGE_GET", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/usage/get');
 define("RMS_API_CABINET_FOLDERS_GET", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/folders/get');
+define("RMS_API_CABINET_FOLDERS_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/folder/insert');
+define("RMS_API_CABINET_FILES_SEARCH", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/files/search');
 define("RMS_API_CABINET_FILE_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/file/insert');
+define("RMS_API_CABINET_FILE_UPDATE", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/file/update');
+define("RMS_API_CABINET_FILE_DELETE", 'https://api.rms.rakuten.co.jp/es/1.0/cabinet/file/delete');
 define("RMS_API_ORDER_GET", 'https://api.rms.rakuten.co.jp/es/1.0/order/ws');
 define("RMS_API_ORDER_SOAP_WSDL", 'https://api.rms.rakuten.co.jp/es/1.0/order/ws?WSDL');
 define("RMS_API_INVENTORY_SOAP_ADDRESS", 'https://api.rms.rakuten.co.jp/es/1.0/inventory/ws');

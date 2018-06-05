@@ -3,12 +3,20 @@
 require_once('config.php');
 require_once('util.php');
 
-$limit = 10; // 一回に取得する件数
-$offset = 1; // 取得するページ番号。2を指定すると↑の場合だと11-20件目を取ってくる
+$conditions = array(
+  'limit' => 10, // 一回に取得する件数
+  'offset' => 1, // 取得するページ番号。2を指定するとlimit+1件目から2*limit件目を取ってくる
+);
 
-list($httpStatusCode, $response) = getFolders($limit, $offset);
+list($httpStatusCode, $response) = getFolders($conditions);
 
-function getFolders($item) {
+/*
+* APIのリクエストを行う
+* xmlを作って curlでgetしてる
+* @param $conditions 取得したいフォルダ情報の条件
+* @return リクエストしたxml文字列, httpステータスコード, レスポンス文字列(xmlで返ってくる)
+*/
+function getFolders($conditions) {
   $responseBody = [];
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
   $header = array(
@@ -17,7 +25,16 @@ function getFolders($item) {
   );
 
   // クエリストリングにそれぞれのパラメーターセット
-  $url = RMS_API_CABINET_FOLDERS_GET . "?offset=$offset" . "&" . "limit=$limit";
+  $url = RMS_API_CABINET_FOLDERS_GET . "?";
+  foreach($conditions as $key => $value) {
+    if(!is_null($value)) {
+      // 条件が設定されていればクエリに追加
+      $url .= "{$key}={$value}" . "&";
+    }
+  }
+  $url = substr($url, 0, -1); // 末尾の「&」を削除
+  customVarDump($url);
+  
   $ch = curl_init($url);
 
   curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
@@ -41,7 +58,7 @@ function getFolders($item) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>item.get | ItemAPI</title>
+    <title>cabinet.folders.get | CabinetAPI</title>
     <meta charset="UTF-8">
     <style>
       pre,code {
