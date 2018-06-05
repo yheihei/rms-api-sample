@@ -77,7 +77,52 @@ http://tm-webtools.com/Tools/XMLBeauty
 
 # R-CabinetAPI（CabinetAPI）
 
-ドラフト作成。実動作不可。現在楽天に問い合わせ中。
+## getCabinetUsage.php
+cabinet.usage.get APIを用いて、R-Cabinetの状態を返却する。  
+ブラウザ上にリクエストと結果を表示。 
+R-Cabinetはプランによってフォルダの作成可能数や画像の登録可能数が異なる。  
+本APIはその状態を返却する。
+
+使用例.  
+ファイル登録前に、ファイル登録上限に達していないか確認するなど  
+
+## getCabinetFolders.php
+cabinet.folders.get APIを用いて、フォルダの一覧を取得する。  
+ブラウザ上にリクエストと結果を表示。  
+動的に画像を保存するフォルダを制御したい場合に、本APIを用いる。  
+また、画像保存の際、フォルダIDを求められるため、cabinet.file.insert/updateを使用する際に、使用することになる。
+
+## searchCabinetFiles.php
+cabinet.files.search APIを用いて、画像を検索する。  
+ブラウザ上にリクエストと結果を表示。  
+fileIdやfileNameなどをパラメータに取れるため、画像の更新や取得などの際に使用することになる。  
+システム側はfileIdで商品画像を紐つけておくと、検索しやすく、スムーズである。
+
+## deleteCabinetFile.php
+cabinet.file.delete APIを用いて、ファイルを削除する。  
+ブラウザ上にリクエストと結果を表示。  
+fileId指定で削除することができる。  
+仕様上複数のfileIdを指定して一括で削除ができるはずだが、サンプルでは1画像の削除だけにとどまる。  
+(自分のサブルーチンがダメダメなせいで改造するのが面倒だった)  
+複数画像削除できるようにしてという要望があれば改造します。
+
+## insertCabinetFile.php
+cabinet.file.insert APIを用いて、画像ファイルを指定して画像を登録する。  
+ブラウザ上にリクエストと結果を表示。  
+送信したいファイルのファイルパスと、R-Cabinet上の設定値を入力してAPIを叩いている。
+どのフォルダの配下に画像を登録するか、folderIdで指定することになるので、cabinet.folders.get APIと連携しながら使うことになる。
+
+## updateCabinetFile.php
+cabinet.file.update APIを用いて、画像IDを指定して画像情報を更新する。  
+ブラウザ上にリクエストと結果を表示。  
+更新したい画像のfileIdを指定することになるので、cabinet.files.search APIなどと連携しながら使うことになる。
+
+## insertCabinetFolder.php
+cabinet.folder.insert APIを用いて、フォルダを作成する。    
+ブラウザ上にリクエストと結果を表示。  
+フォルダ名を入力してPostするだけでルートフォルダ配下にフォルダを作成してくれるが、
+upperFolderIdで上位フォルダのフォルダIDを指定することで、任意の場所にフォルダを作成することも可能。 
+ただし、基本フォルダ(フォルダID:0)配下にはフォルダは作成できないので注意。
 
 # 受注API(OrderAPI)
 

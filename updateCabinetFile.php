@@ -2,7 +2,7 @@
 
 require_once('config.php');
 require_once('util.php');
-require_once('class/cabinetFileSetting.php');
+require_once('class/cabinetUpdateFileSetting.php');
 require_once('class/cabinetUploadFileInfo.php');
 
 ini_set('xdebug.var_display_max_children', -1);
@@ -15,20 +15,20 @@ ini_set('xdebug.var_display_max_depth', -1);
  * */
 
 // 送信したいファイルの情報設定
-$cabinetUploadFileInfo = new CabinetUploadFileInfo(__DIR__ . '/image/test_image.jpg'); // 送信したいファイルの絶対パスを指定 mimeとかいろんな情報をconstructerでメンバーに設定している
+$cabinetUploadFileInfo = new CabinetUploadFileInfo(__DIR__ . '/image/test_image.jpg'); // 送信したいファイルの絶対パスを指定
 // NOTE: $cabinetUploadFileInfo->extensionがnullの場合対応していない拡張子のファイルなのでエラーを起こした方が良い
 
-// customVarDump($cabinetUploadFileInfo);
+// var_dump($cabinetUploadFileInfo);
 
 // 画像の名前やパスなど
-$cabinetFileSetting = new CabinetFileSetting();
-$cabinetFileSetting->fileName = 'test_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');
-$cabinetFileSetting->folderId = 0; // 0は基本フォルダ folderIdはcabinet.folders.getで確認可能
-$cabinetFileSetting->filePath = basename($cabinetUploadFileInfo->filePath); // 拡張子つける 送信する実ファイルの名前を正確に「hoge.jpg」とか
-$cabinetFileSetting->overWrite = "true"; // 文字列指定でなければならない「true」とか「false」とか。overWriteがtrueかつfilePathの指定がある場合、filePathをキーとして画像情報を上書きすることができます
+$cabinetUpdateFileSetting = new CabinetUpdateFileSetting();
+$cabinetUpdateFileSetting->fileName = 'test_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');
+$cabinetUpdateFileSetting->fileId = 87570458; // 更新したいファイルのファイルID cabinet.files.search などで取得できる
+$cabinetUpdateFileSetting->filePath = basename($cabinetUploadFileInfo->filePath); // 拡張子つける 送信する実ファイルの名前を正確に
+
 
 // 楽天へRMS APIを使って画像アップロード
-list($reqXml, $httpStatusCode, $response) = cabinetFileInsert($cabinetFileSetting, $cabinetUploadFileInfo);
+list($reqXml, $httpStatusCode, $response) = cabinetFileUpdate($cabinetUpdateFileSetting, $cabinetUploadFileInfo);
 
 
 
@@ -37,16 +37,16 @@ list($reqXml, $httpStatusCode, $response) = cabinetFileInsert($cabinetFileSettin
 /*
 * APIのリクエストを行う
 * xmlを作って file_get_contentsでpostしてる
-* @param $cabinetFileSetting 挿入したい画像設定のクラスオブジェクト
-* @param $cabinetUploadFileInfo 挿入したい画像ファイルのオブジェクト
+* @param $cabinetUpdateFileSetting 更新したい画像設定のクラスオブジェクト
+* @param $cabinetUploadFileInfo 更新したい画像ファイルのオブジェクト
 * @return リクエストしたxml文字列, httpステータスコード, レスポンス文字列(xmlで返ってくる)
 */
-function cabinetFileInsert($cabinetFileSetting, $cabinetUploadFileInfo) {
+function cabinetFileUpdate($cabinetUpdateFileSetting, $cabinetUploadFileInfo) {
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
 
-  $url = RMS_API_CABINET_FILE_INSERT;
+  $url = RMS_API_CABINET_FILE_UPDATE;
   
-  $reqXml = _createRequestXml($cabinetFileSetting);
+  $reqXml = _createRequestXml($cabinetUpdateFileSetting);
   
   $cabinetUploadFileInfoArray = array(
       'file' => $cabinetUploadFileInfo //アップロードするファイルのCabinetUploadFileInfoオブジェクトを渡す
@@ -63,9 +63,7 @@ function cabinetFileInsert($cabinetFileSetting, $cabinetUploadFileInfo) {
 /***
  * 指定したURLに指定したパラメータのリクエストとファイルアップロードのPOSTを行う
  * 
- * @param $url POSTするURL
- * @param $params リクエストパラメーター
- * @param $cabinetUploadFileInfoArray アップロードするファイル CabinetUploadFileInfoオブジェクト
+ * @param $url POSTするURL $params リクエストパラメーター $cabinetUploadFileInfoArray CabinetUploadFileInfoオブジェクト
  * 
  * */
 function httpPost($url, $params, $cabinetUploadFileInfoArray = []){
@@ -125,12 +123,14 @@ function httpPost($url, $params, $cabinetUploadFileInfoArray = []){
 
 /*
 * 渡したclassオブジェクトからリクエストのXMLを自動生成する
+* 注意. xmlの要素の順番を変えると400でwrong formatエラーが返却されるクソ仕様。
+*       cabinet.file.getでxmlの要素の順番を確認しながら行うと無難(API仕様書でも良いが間違ってないという保証はない)
 */
 function _createRequestXml($cabinetFile) {
 
   // リクエストXMLのガワを作る
   $rootXml = new SimpleXMLElement('<?xml version="1.0" encoding="UTF-8"?><request/>');
-  $fileInsertRequestXml = $rootXml->addChild('fileInsertRequest');
+  $fileInsertRequestXml = $rootXml->addChild('fileUpdateRequest');
   $fileXml = $fileInsertRequestXml->addChild('file');
   
   // 受け取った商品情報オブジェクトをarrayに変換
@@ -182,7 +182,7 @@ function _convertClassObjectToArray($object) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>cabinet.file.insert | CabinetAPI</title>
+    <title>cabinet.file.update | CabinetAPI</title>
     <meta charset="UTF-8">
     <style>
       pre,code {
