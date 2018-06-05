@@ -16,6 +16,11 @@ define("RMS_API_ORDER_SOAP_WSDL", 'https://api.rms.rakuten.co.jp/es/1.0/order/ws
 define("RMS_API_INVENTORY_SOAP_ADDRESS", 'https://api.rms.rakuten.co.jp/es/1.0/inventory/ws');
 define("RMS_API_INVENTORY_SOAP_WSDL", 'https://inventoryapi.rms.rakuten.co.jp/rms/mall/inventoryapi');
 define("RMS_API_PAYMENT_SOAP_WSDL", 'https://orderapi.rms.rakuten.co.jp/rccsapi-services/RCCSApiService?wsdl');
+define("RMS_API_CATEGORY_SETS_GET", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/categorysets/get');
+define("RMS_API_CATEGORIES_GET", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/categories/get');
+define("RMS_API_CATEGORY_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/category/insert');
+define("RMS_API_CATEGORY_UPDATE", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/category/update');
+define("RMS_API_CATEGORY_DELETE", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/category/delete');
 
 // 商品登録(ItemAPI)設定関連
 define("RMS_CATALOG_EXCEPTION_REASON_NO_JAN", 5);
