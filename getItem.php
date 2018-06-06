@@ -64,7 +64,7 @@ function getItem($item) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          $xml = htmlspecialchars($response, ENT_QUOTES);
+          $xml = htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
           echo $xml; ?>
       </pre>
       <?php 
