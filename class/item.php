@@ -23,6 +23,7 @@ class Item
   public $isDepot; //倉庫指定
   public $point; // Pointクラスのオブジェクトが入る
   public $itemInventory; // ItemInventoryクラスのオブジェクトが入る
+  public $categories; // CategoryInfoオブジェクトが入る
   
   function __construct() {
       

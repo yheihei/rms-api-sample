@@ -7,6 +7,7 @@ require_once('class/image.php');
 require_once('class/point.php');
 require_once('class/itemInventory.php');
 require_once('class/inventory.php');
+require_once('class/categoryInfo.php');
 
 ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
@@ -38,21 +39,29 @@ $itemInventory->inventories[] = $inventory;
 // 商品に在庫情報をセット
 $item->itemInventory = $itemInventory;
 
-// (1) ポイント倍率更新の場合
-$point = new Point();
-$point->pointRate = 2; //変倍率
-$pointRateStart = new DateTime('now');
-$pointRateStart->modify('+2 hours +30 minutes'); //現在時刻から2時間30分後を変倍の開始に
-$pointRateStart->setTimeZone( new DateTimeZone('Asia/Tokyo'));
-$pointRateEnd = clone $pointRateStart;
-$pointRateEnd->modify('+60 day -1hour'); // 変倍開始から60日後を変倍の終了に
-$point->pointRateStart = $pointRateStart->format(DATE_RFC3339); // 変倍開始時期を文字列でセット
-$point->pointRateEnd = $pointRateEnd->format(DATE_RFC3339); // 変倍終了時期を文字列でセット
+// (1) ポイント倍率更新の場合 // 一度設定して開催期間中になった場合は再更新はできません
+// $point = new Point();
+// $point->pointRate = 2; //変倍率
+// $pointRateStart = new DateTime('now');
+// $pointRateStart->modify('+2 hours +30 minutes'); //現在時刻から2時間30分後を変倍の開始に
+// $pointRateStart->setTimeZone( new DateTimeZone('Asia/Tokyo'));
+// $pointRateEnd = clone $pointRateStart;
+// $pointRateEnd->modify('+60 day -1hour'); // 変倍開始から60日後を変倍の終了に
+// $point->pointRateStart = $pointRateStart->format(DATE_RFC3339); // 変倍開始時期を文字列でセット
+// $point->pointRateEnd = $pointRateEnd->format(DATE_RFC3339); // 変倍終了時期を文字列でセット
 // (2) ポイント倍率削除の場合 空オブジェクトを入れると削除
 // $point = new Point();
 
 // 商品にポイント倍率をセット
-$item->point = $point;
+// $item->point = $point;
+
+// カテゴリー設定 (設定したい場合は首開けして)
+// $categoryInfo = new CategoryInfo();
+// $categoryInfo->categoryId = 100; // 設定したいカテゴリーIDを指定
+// 商品にカテゴリーをセット(設定したい場合は首開けして)
+// $item->categories = array('categoryInfo' => $categoryInfo);
+// ↑イリーガルなセットの仕方。本当はarray($categoryInfo, ...) とやりたいが今のcreateRequestXml関数だと無理。
+//  普通categoriesの下はcategory要素が来るだろうに仕様上そうなっていない為の苦肉の策。ミスった。
 
 // // ディレクトリID カタログID(JAN)設定
 // $item->genreId = 209124; //本・雑誌・コミック>PC・システム開発>プログラミング>PHP  この値は連関表から取得
@@ -200,7 +209,7 @@ function _convertClassObjectToArray($object) {
     <div style="width:100%;">
       <h1>リクエスト</h1>
       <pre>
-        <?php echo htmlspecialchars($reqXml, ENT_QUOTES);; ?>
+        <?php echo htmlspecialchars(returnFormattedXmlString($reqXml), ENT_QUOTES);; ?>
       </pre>
       <h1>レスポンス結果</h1>
       <h2>HTTP Status code</h2>
@@ -210,7 +219,7 @@ function _convertClassObjectToArray($object) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          $xml = htmlspecialchars($response, ENT_QUOTES);
+          $xml = htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
           echo $xml; ?>
       </pre>
       <?php 
