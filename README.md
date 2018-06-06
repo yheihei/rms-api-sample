@@ -26,6 +26,18 @@ item.insertのAPIを叩いて、ブラウザ上にリクエストと結果を表
 * 送料など
 * 納期管理番号の設定
 
+カテゴリーのセットもできます。その場合は下記を首開けして使用してください。  
+
+```
+// カテゴリー設定 (設定したい場合は首開けして)
+// $categoryInfo = new CategoryInfo();
+// $categoryInfo->categoryId = 100; // 設定したいカテゴリーIDを指定
+// 商品にカテゴリーをセット(設定したい場合は首開けして)
+// $item->categories = array('categoryInfo' => $categoryInfo);
+
+```
+
+
 ## insertVariationItem.php
 item.insertのAPIを叩いて、ブラウザ上にリクエストと結果を表示します  
 在庫タイプ2：項目選択肢別在庫設定 を設定した際の新規商品登録のサンプルです。  
@@ -50,6 +62,17 @@ item.updateのAPIを叩いて、ブラウザ上にリクエストと結果を表
 * ポイント変倍設定
 * 送料など
 * 納期管理番号の設定
+
+カテゴリーのセットもできます。その場合は下記を首開けして使用してください。  
+
+```
+// カテゴリー設定 (設定したい場合は首開けして)
+// $categoryInfo = new CategoryInfo();
+// $categoryInfo->categoryId = 100; // 設定したいカテゴリーIDを指定
+// 商品にカテゴリーをセット(設定したい場合は首開けして)
+// $item->categories = array('categoryInfo' => $categoryInfo);
+
+```
 
 ## updateVariationItem.php
 item.updateのAPIを叩いて、ブラウザ上にリクエストと結果を表示します  
