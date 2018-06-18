@@ -232,6 +232,9 @@ getOrderで得られるxmlの<orderModel>配下をパースしてarrayにし、
 それを$updateOrderRequestModel->orderModelのarrayに挿入して、  
 本ファイルのupdateOrder関数にぶち込むことをオススメします  
 
+## cancelOrders.php
+cancelOrder APIを用いて受注をキャンセルする。キャンセルしたい受注番号とキャンセル理由を指定することでキャンセル可能。
+
 ## getResult.php
 getResultのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
 OrderAPI全般の非同期APIを叩く際に使ったリクエストIDを入れて本APIを叩くと、非同期処理結果がどうなったかが返却される。  
@@ -302,7 +305,6 @@ cclass stdClass#3 (1) {
 }
 
 ```
-
 
 # 在庫API（InventoryAPI）
 
