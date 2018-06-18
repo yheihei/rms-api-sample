@@ -18,21 +18,23 @@ ini_set('xdebug.var_display_max_depth', -1);
 $orderRequestModel = new GetOrderRequestModel();
 $orderRequestModel->isOrderNumberOnlyFlg = 0; // false:受注情報を取得
 
-// 受注検索モデルを設定
-$orderSearchModel = new OrderSearchModel();
-$orderSearchModel->dateType = RMS_GET_ORDER_DATE_TYPE_ORDER;
-$endDate = new DateTime('now');
-$endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
-$endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
-$startDate = clone $endDate;
-$startDate->modify('-30 day'); // 30日前を開始に
-$orderSearchModel->startDate = $startDate->format("Y-m-d");
-$orderSearchModel->endDate = $endDate->format("Y-m-d");
-//受注検索モデルを受注情報にセット
-$orderRequestModel->orderSearchModel = $orderSearchModel;
+// 受注番号指定の場合下記を設定
+$orderNumber = array('338459-20180612-00001222'); // 複数指定可能
+$orderRequestModel->orderNumber = $orderNumber; // 受注番号を受注情報にセット
 
-// 楽天へRMS APIを使って送信
-// list($reqXml, $httpStatusCode, $response) = getOrder($orderRequestModel);
+// // 受注検索モデルを設定
+// $orderSearchModel = new OrderSearchModel();
+// $orderSearchModel->dateType = RMS_GET_ORDER_DATE_TYPE_ORDER;
+// $endDate = new DateTime('now');
+// $endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
+// $endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
+// $startDate = clone $endDate;
+// $startDate->modify('-30 day'); // 30日前を開始に
+// $orderSearchModel->startDate = $startDate->format("Y-m-d");
+// $orderSearchModel->endDate = $endDate->format("Y-m-d");
+// //受注検索モデルを受注情報にセット
+// $orderRequestModel->orderSearchModel = $orderSearchModel;
+
 // 楽天へRMS APIを使って送信
 list($request, $httpStatusCode, $response) = getOrder($orderRequestModel);
 

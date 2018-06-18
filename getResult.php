@@ -15,7 +15,7 @@ ini_set('xdebug.var_display_max_depth', -1);
  * $requestIdはシステム内に保存しておくこと。
  * */
 // 結果を確認したいリクエストIDを入力(arrayで複数可能)
-$requestIds = array(584649535, 584618680);
+$requestIds = array(607077163);
 
 
 // 楽天へRMS APIを使って送信
