@@ -18,22 +18,22 @@ ini_set('xdebug.var_display_max_depth', -1);
 $orderRequestModel = new GetOrderRequestModel();
 $orderRequestModel->isOrderNumberOnlyFlg = 0; // false:受注情報を取得
 
-// 受注番号指定の場合下記を設定
-$orderNumber = array('338459-20180612-00001222'); // 複数指定可能
-$orderRequestModel->orderNumber = $orderNumber; // 受注番号を受注情報にセット
+// // 受注番号指定の場合下記を設定
+// $orderNumber = array('338459-20180612-00001714'); // 複数指定可能
+// $orderRequestModel->orderNumber = $orderNumber; // 受注番号を受注情報にセット
 
-// // 受注検索モデルを設定
-// $orderSearchModel = new OrderSearchModel();
-// $orderSearchModel->dateType = RMS_GET_ORDER_DATE_TYPE_ORDER;
-// $endDate = new DateTime('now');
-// $endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
-// $endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
-// $startDate = clone $endDate;
-// $startDate->modify('-30 day'); // 30日前を開始に
-// $orderSearchModel->startDate = $startDate->format("Y-m-d");
-// $orderSearchModel->endDate = $endDate->format("Y-m-d");
-// //受注検索モデルを受注情報にセット
-// $orderRequestModel->orderSearchModel = $orderSearchModel;
+// 受注検索モデルを設定
+$orderSearchModel = new OrderSearchModel();
+$orderSearchModel->dateType = RMS_GET_ORDER_DATE_TYPE_ORDER;
+$endDate = new DateTime('now');
+$endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
+$endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
+$startDate = clone $endDate;
+$startDate->modify('-30 day'); // 30日前を開始に
+$orderSearchModel->startDate = $startDate->format("Y-m-d");
+$orderSearchModel->endDate = $endDate->format("Y-m-d");
+//受注検索モデルを受注情報にセット
+$orderRequestModel->orderSearchModel = $orderSearchModel;
 
 // 楽天へRMS APIを使って送信
 list($request, $httpStatusCode, $response) = getOrder($orderRequestModel);
@@ -80,8 +80,11 @@ function getOrder($orderRequestModel) {
   $userAuthModel->authKey = "ESA " . base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
   $userAuthModel->shopUrl = RMS_SETTLEMENT_SHOP_URL;
   $userAuthModel->userName  = RMS_SETTLEMENT_USER_NAME;
+  $requestArray = _convertClassObjectToArray($orderRequestModel);
+  $requestArray = _deleteEmptyElements($requestArray);
+  
   $params = array('arg0' => _convertClassObjectToArray($userAuthModel),
-    'arg1' => _convertClassObjectToArray($orderRequestModel));
+    'arg1' => $requestArray);
   // customVarDump($params);
   
   //エラーを無視するエラーハンドラに切り替える（実行後は元に戻す）
@@ -116,6 +119,18 @@ function getOrder($orderRequestModel) {
 function myErrorHandler($errno, $errstr, $errfile, $errline)
 {
   
+}
+
+/**
+ * arrayからnullの要素を除去
+ * */
+function _deleteEmptyElements($array) {
+  foreach($array as $key => $value) {
+    if(is_null($value)) {
+      unset($array[$key]);
+    }
+  }
+  return $array;
 }
 
 /**
