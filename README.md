@@ -235,6 +235,9 @@ getOrderで得られるxmlの<orderModel>配下をパースしてarrayにし、
 ## cancelOrders.php
 cancelOrder APIを用いて受注をキャンセルする。キャンセルしたい受注番号とキャンセル理由を指定することでキャンセル可能。
 
+## rBankAccountTransfer.php
+rBankAccountTransfer APIを用いて楽天銀行に振替依頼をする。注文番号を指定してコールする。
+
 ## getResult.php
 getResultのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
 OrderAPI全般の非同期APIを叩く際に使ったリクエストIDを入れて本APIを叩くと、非同期処理結果がどうなったかが返却される。  
