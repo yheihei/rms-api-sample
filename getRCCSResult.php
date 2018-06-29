@@ -10,7 +10,7 @@ ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
 // リクエスト結果を見たいリクエストIDを入力
-$requestIds = array(607067370);
+$requestIds = array(174355113);
 
 /***
  * リクエスト結果を取得 getRCCSResult [同期]
