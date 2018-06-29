@@ -163,7 +163,7 @@ function getOrderRequestId() {
     //SOAP通信の実行に失敗した場合の処理
   }
   // customVarDump($client->__getLastRequest());
-  // customVarDump($client->__getLastResponse());
+  customVarDump($client->__getLastResponse());
   
   return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $result);
 }
