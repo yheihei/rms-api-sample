@@ -10,7 +10,13 @@ ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
 // オーソリ取り消ししたい受注番号を入力
-$orderNumber = "338459-20180530-00000825";
+$queryOrderNumber = $_GET[num];
+if(empty($queryOrderNumber)) {
+// オーソリキャンセルしたい受注番号を入力
+  $orderNumber = "338459-20180615-00000818";
+} else {
+  $orderNumber = $queryOrderNumber;
+}
 
 /***
  * リクエストIDを取得 getRCCSRequestId [同期]
@@ -110,7 +116,7 @@ function authoriCancel($requestId, $uiCancelRequestModels) {
   // customVarDump($client->__getLastRequest());
   // customVarDump($client->__getLastResponse());
   
-  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $result);
+  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $client->__getLastResponse());
 }
 
 /***
@@ -215,7 +221,8 @@ function _convertClassObjectToArray($object) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          echo customVarDump($response);
+          // echo customVarDump($response);
+          echo htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
           ?>
       </pre>
     </div>
