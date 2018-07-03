@@ -71,28 +71,24 @@ function cabinetFileInsert($cabinetFileSetting, $cabinetUploadFileInfo) {
 function httpPost($url, $params, $cabinetUploadFileInfoArray = []){
     $isMultipart = (count($cabinetUploadFileInfoArray)) ? true : false;
     $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
-    if ($isMultipart){
-        //ファイルアップロードを伴う場合、multipartで送信
-        $boundary = md5(mt_rand() . microtime());
-        $contentType = "Content-Type: multipart/form-data; boundary=\"$boundary\"";
-        $data = '';
-        foreach($params as $key => $value) {
-            $data .= "--$boundary" . "\r\n";
-            $data .= 'Content-Disposition: form-data; name=' . '"'. $key . '"' . "\r\n" . "\r\n";
-            $data .= $value . "\r\n";
-        }
-        foreach($cabinetUploadFileInfoArray as $key => $cabinetUploadFileInfo) {
-            $data .= "--$boundary" . "\r\n";
-            $data .= sprintf('Content-Disposition: form-data; name="%s"; filename="%s"%s', $key, basename($cabinetUploadFileInfo->filePath), "\r\n");
-            $data .= 'Content-Type: '. $cabinetUploadFileInfo->mimeType . "\r\n" . "\r\n";
-            $data .= file_get_contents($cabinetUploadFileInfo->filePath) . "\r\n";
-        }
-        $data .= "--$boundary--";
-    } else {
-        //パラメータのみを送信
-        $contentType = 'Content-Type: application/x-www-form-urlencoded';
-        $data = http_build_query($params);
+
+    // RMSのファイル設定部分
+    $boundary = md5(mt_rand() . microtime());
+    $contentType = "Content-Type: multipart/form-data; boundary=\"$boundary\"";
+    $data = '';
+    foreach($params as $key => $value) {
+        $data .= "--$boundary" . "\r\n";
+        $data .= 'Content-Disposition: form-data; name=' . '"'. $key . '"' . "\r\n" . "\r\n";
+        $data .= $value . "\r\n";
     }
+    // ファイルアップロード部分
+    foreach($cabinetUploadFileInfoArray as $key => $cabinetUploadFileInfo) {
+        $data .= "--$boundary" . "\r\n";
+        $data .= sprintf('Content-Disposition: form-data; name="%s"; filename="%s"%s', $key, basename($cabinetUploadFileInfo->filePath), "\r\n");
+        $data .= 'Content-Type: '. $cabinetUploadFileInfo->mimeType . "\r\n" . "\r\n";
+        $data .= file_get_contents($cabinetUploadFileInfo->filePath) . "\r\n";
+    }
+    $data .= "--$boundary--";
 
     $headers = array(
         "Connection: keep-alive",
@@ -105,8 +101,8 @@ function httpPost($url, $params, $cabinetUploadFileInfoArray = []){
         // "Accept-Language: ja,en-US;q=0.8,en;q=0.6"
     );
     $header = implode("\r\n", $headers);
-    // customVarDump($header);
-    // customVarDump($data);
+    customVarDump($header);
+    customVarDump($data);
 
     $options = array('http' => array(
         'method'  => 'POST',
