@@ -255,6 +255,7 @@ function updateOrder($updateOrderRequestModel) {
   
   try{
     //SOAP通信実行
+    // customVarDump($params);
     $result = $client->updateOrder($params);
     // customVarDump($result);
   } catch (SoapFault $e) {
@@ -264,7 +265,7 @@ function updateOrder($updateOrderRequestModel) {
   // customVarDump($client->__getLastRequest());
   // customVarDump($client->__getLastResponse());
   
-  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $result);
+  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $client->__getLastResponse());
 }
 
 /***
@@ -371,7 +372,8 @@ function _convertClassObjectToArray($object) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          echo customVarDump($response);
+          // echo customVarDump($response);
+          echo htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
           ?>
       </pre>
     </div>
