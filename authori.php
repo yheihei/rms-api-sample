@@ -44,7 +44,13 @@ $requestId = $response->result->requestId;
  * */
 $uiAuthoriRequestModel = new UiAuthoriRequestModel();
 $uiAuthoriRequestModel->orderNumber = $orderNumber;
-$uiAuthoriRequestModel->price = 208;
+$queryOrderPrice = $_GET[price];
+if(empty($queryOrderPrice)) {
+  // オーソリ処理したい金額
+  $uiAuthoriRequestModel->price = 208;
+} else {
+  $uiAuthoriRequestModel->price = $queryOrderPrice;
+}
 $uiAuthoriRequestModel->payType = 0; // 一括払い
 $uiAuthoriRequestModels[] = $uiAuthoriRequestModel;
 
