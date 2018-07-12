@@ -205,6 +205,9 @@ getOrder APIを用いて、受注商品情報を取得する。
 1. GetOrderRequestModelに取得したい受注の条件を記載
 2. それをAPIコールする関数getOrder()に渡す
 
+詳細解説記事はこちら  
+https://virusee.net/rms-api-getorder/
+
 ## changeStatus.php
 changeStatus APIを用いて、受注のステータスを変更する
 例えば、下記のようなものを文字列で指定。
@@ -227,9 +230,6 @@ changeStatus APIを用いて、受注のステータスを変更する
 
 なお、changeStatus APIは非同期処理のため、処理結果を取得するにはリクエストIDを用いて
 getResult APIを叩く必要がある。
-
-詳細解説記事はこちら  
-https://virusee.net/rms-api-getorder/
 
 ## updateOrder.php
 updateOrder APIを用いて、受注情報を更新する。処理の流れは下記。
