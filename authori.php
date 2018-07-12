@@ -1,5 +1,10 @@
 <?php
 
+/* 
+詳細解説記事はこちら  
+https://virusee.net/rms-api-authori/
+*/
+
 require_once('config.php');
 require_once('util.php');
 require_once('class/userAuthModel.php');
