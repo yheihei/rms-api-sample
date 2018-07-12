@@ -5,6 +5,9 @@
 極力特別なパッケージは使用せず、デフォルトのPHPの機能で動作させる様に心がけています。
 RMSを使ったツール開発のヒントになれば幸いです。
 
+詳細解説記事はこちら  
+https://virusee.net/rms-api-sample-abstract/
+
 # 使い方
 ## config.phpを設定する
 
@@ -25,6 +28,9 @@ item.insertのAPIを叩いて、ブラウザ上にリクエストと結果を表
 * ポイント変倍設定
 * 送料など
 * 納期管理番号の設定
+ 
+詳細解説記事はこちら  
+https://virusee.net/rms-api-item-insert/
 
 カテゴリーのセットもできます。その場合は下記を首開けして使用してください。  
 
@@ -135,6 +141,9 @@ cabinet.file.insert APIを用いて、画像ファイルを指定して画像を
 送信したいファイルのファイルパスと、R-Cabinet上の設定値を入力してAPIを叩いている。
 どのフォルダの配下に画像を登録するか、folderIdで指定することになるので、cabinet.folders.get APIと連携しながら使うことになる。
 
+詳細解説記事はこちら  
+https://virusee.net/rms-api-cabinetfile-insert/
+
 ## updateCabinetFile.php
 cabinet.file.update APIを用いて、画像IDを指定して画像情報を更新する。  
 ブラウザ上にリクエストと結果を表示。  
@@ -218,6 +227,9 @@ changeStatus APIを用いて、受注のステータスを変更する
 
 なお、changeStatus APIは非同期処理のため、処理結果を取得するにはリクエストIDを用いて
 getResult APIを叩く必要がある。
+
+詳細解説記事はこちら  
+https://virusee.net/rms-api-getorder/
 
 ## updateOrder.php
 updateOrder APIを用いて、受注情報を更新する。処理の流れは下記。
@@ -322,6 +334,9 @@ updateInventoryExternalのAPIを叩いて、在庫タイプが項目選択肢別
 
 ＊item.updateでもできるが、item.updateだと全てのバリエーションに在庫数をセットして更新しないといけない。  
 
+詳細解説記事はこちら  
+https://virusee.net/rms-api-updateinventoryexternal/
+
 ## getInventoryExternal.php
 getInventoryExternalのAPIを叩いて、商品URLを指定して在庫を取得するAPIサンプル。  
 商品のitemUrlをリストに詰めてコールすると、在庫タイプ：通常/項目選択肢別の全ての在庫数などの情報を返してくれる。
@@ -338,6 +353,9 @@ authoriのAPIを叩いて、ブラウザ上にリクエストと結果を表示
 カードステータスが「1(受注したが決済に関して何もしていない状態？楽天に定義がない)」の受注番号を指定し、カードステータスを「オーソリ済み」にする非同期API。  
 処理の結果はすぐには反映されず、authori前にgetRCCSRequestId APIで取得したリクエストIDを元に  
 getRCCSResultで取得する必要がある。カードステータスは、受注APIのgetOrderで返却される受注商品のcardStatusでも確認できる。
+
+詳細解説記事はこちら  
+https://virusee.net/rms-api-authori/
 
 ## authoriCancel.php
 authoriCancelのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
