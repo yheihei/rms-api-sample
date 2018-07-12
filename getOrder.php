@@ -50,6 +50,7 @@ list($request, $httpStatusCode, $response) = getOrder($orderRequestModel);
 
 /***
  * 受注情報の取得 getOrder　[同期]
+ * @see https://virusee.net/rms-api-getorder/
  * 
  * POST例は下記。本例ではSOAPクライアントを使っているが、自前でやりたい場合は下記のxmlを組み立ててPOSTすること
  

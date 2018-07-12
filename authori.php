@@ -64,9 +64,10 @@ list($request, $httpStatusCode, $response) = authori($requestId, $uiAuthoriReque
 
 //////////////// 関数群 ////////////////////
 
-/*
+/**
 * APIのリクエストを行う
 * SOAP Clientを使ってパラメータをセットしPOSTしている
+* @see https://virusee.net/rms-api-authori/
 * @param セットしたい受注の決済のクラスオブジェクト
 * @return リクエストしたxml文字列, httpステータスコード, レスポンスオブジェクト
 

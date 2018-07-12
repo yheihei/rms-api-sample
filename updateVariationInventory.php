@@ -56,6 +56,7 @@ list($request, $httpStatusCode, $response) = updateInventoryExternal($updateRequ
  * 在庫情報更新 updateInventoryExternal　[同期]
  * 商品単位または項目選択肢単位で、在庫情報（在庫数、納期情報など）の更新を行います。
  * 最大400件を同時に更新できます。
+ * @see https://virusee.net/rms-api-updateinventoryexternal/
  * 
  * @return リクエストしたxml文字列, httpステータスコード, レスポンスオブジェクト
  * 

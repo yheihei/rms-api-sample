@@ -39,9 +39,10 @@ list($reqXml, $httpStatusCode, $response) = cabinetFileInsert($cabinetFileSettin
 
 //////////////// 関数群 ////////////////////
 
-/*
+/**
 * APIのリクエストを行う
 * xmlを作って file_get_contentsでpostしてる
+* @see https://virusee.net/rms-api-cabinetfile-insert/
 * @param $cabinetFileSetting 挿入したい画像設定のクラスオブジェクト
 * @param $cabinetUploadFileInfo 挿入したい画像ファイルのオブジェクト
 * @return リクエストしたxml文字列, httpステータスコード, レスポンス文字列(xmlで返ってくる)

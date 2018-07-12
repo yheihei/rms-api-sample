@@ -102,9 +102,10 @@ list($reqXml, $httpStatusCode, $response) = insertItem($item);
 
 //////////////// 関数群 ////////////////////
 
-/*
+/**
 * APIのリクエストを行う
 * xmlを作って curlでpostしてる
+* @see https://virusee.net/rms-api-item-insert/
 * @param 挿入したい商品情報のクラスオブジェクト
 * @return リクエストしたxml文字列, httpステータスコード, レスポンス文字列(xmlで返ってくる)
 */
