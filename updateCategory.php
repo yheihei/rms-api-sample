@@ -14,11 +14,14 @@ ini_set('xdebug.var_display_max_depth', -1);
  * カテゴリー情報のセット
  * */
 $categoryUpdateRequest = new CategoryUpdateRequest();
-$categoryUpdateRequest->categoryId = 101; // どのカテゴリーを更新するか
+$categoryUpdateRequest->categoryId = 113; // どのカテゴリーを更新するか
 
 // カテゴリーの名前や優先度を更新情報としてセット
 $category = new Category();
-$category->name = 'test_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');
+$category->name = $_GET[num]; // クエリストリングでカテゴリー名指定
+if(empty($category->name)) {
+  $category->name = 'test_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');
+}
 $category->status = 0;
 $category->categoryWeight = 1;
 $categoryUpdateRequest->category = $category;

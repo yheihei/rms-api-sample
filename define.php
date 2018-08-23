@@ -18,6 +18,7 @@ define("RMS_API_INVENTORY_SOAP_WSDL", 'https://inventoryapi.rms.rakuten.co.jp/rm
 define("RMS_API_PAYMENT_SOAP_WSDL", 'https://orderapi.rms.rakuten.co.jp/rccsapi-services/RCCSApiService?wsdl');
 define("RMS_API_CATEGORY_SETS_GET", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/categorysets/get');
 define("RMS_API_CATEGORIES_GET", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/categories/get');
+define("RMS_API_CATEGORY_GET", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/category/get');
 define("RMS_API_CATEGORY_INSERT", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/category/insert');
 define("RMS_API_CATEGORY_UPDATE", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/category/update');
 define("RMS_API_CATEGORY_DELETE", 'https://api.rms.rakuten.co.jp/es/1.0/categoryapi/shop/category/delete');

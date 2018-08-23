@@ -5,7 +5,13 @@ require_once('util.php');
 require_once('class/item.php');
 
 $item = new Item();
-$item->itemUrl = "0296-000006"; // ここを適宜変えると取ってくる商品を変えられる
+$queryItemUrl = $_GET[num]; // クエリストリングでitemurl指定
+if(empty($queryItemUrl)) {
+  $item->itemUrl = "0296-000006"; // 取りたい商品のItemURL
+} else {
+  $item->itemUrl = $queryItemUrl; // 取りたい商品のItemURL
+}
+// $item->itemUrl = "0296-000006"; // ここを適宜変えると取ってくる商品を変えられる
 // $item->itemUrl = "rrrz_05";
 
 list($httpStatusCode, $response) = getItem($item);
@@ -13,6 +19,7 @@ list($httpStatusCode, $response) = getItem($item);
 function getItem($item) {
   $responseBody = [];
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
+  customVarDump($authkey);
   $header = array(
     "Content-Type: text/xml;charset=UTF-8",
     "Authorization: ESA {$authkey}",

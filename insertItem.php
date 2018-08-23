@@ -25,10 +25,11 @@ ini_set('xdebug.var_display_max_depth', -1);
 $item = new Item();
 
 // 商品管理番号(商品URL)、商品番号、商品名、販売価格
-$item->itemUrl = 'testrrrz_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');;
+// $item->itemUrl = 'testrrrz_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');;
+$item->itemUrl = 'kkbrmspro0861-000034';
 $item->itemNumber = $item->itemUrl;
 $item->itemName = 'テスト商品につき購入不可_' . $item->itemUrl;
-$item->itemPrice = 100; 
+$item->itemPrice = 120; 
 
 // 在庫関連設定
 $itemInventory = new ItemInventory();
@@ -236,11 +237,14 @@ function _convertClassObjectToArray($object) {
       ?>
       <h2>result.status</h2>
       <pre>
-        <?php var_dump($responseBody['status']); ?>
+        <?php
+          // var_dump($responseBody['status']);
+          var_dump($response);
+        ?>
       </pre>
       <h2>errorMessages</h2>
       <pre>
-        <?php var_dump($responseBody['itemInsertResult']->errorMessages); ?>
+        <?php var_dump($responseBody['itemInsertResult']->errorMessages->errorMessage->errorId); ?>
       </pre>
       <h2>result.itemInsertResult</h2>
       <pre>

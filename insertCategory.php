@@ -19,9 +19,12 @@ $categoryInsertRequest->categoryId = 0; //どのカテゴリー配下に置く�
 
 // カテゴリーの名前や優先度をセット
 $category = new Category();
-$category->name = 'test_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');
+$category->name = $_GET[num]; // クエリストリングでカテゴリー名指定
+if(empty($category->name)) {
+  $category->name = 'test_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');
+}
 $category->status = 0;
-$category->categoryWeight = 1;
+// $category->categoryWeight = 1;
 $categoryInsertRequest->category = $category;
 
 // 楽天へRMS APIを使って登録

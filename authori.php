@@ -52,7 +52,7 @@ $uiAuthoriRequestModel->orderNumber = $orderNumber;
 $queryOrderPrice = $_GET[price];
 if(empty($queryOrderPrice)) {
   // オーソリ処理したい金額
-  $uiAuthoriRequestModel->price = 208;
+  $uiAuthoriRequestModel->price = 0;
 } else {
   $uiAuthoriRequestModel->price = $queryOrderPrice;
 }

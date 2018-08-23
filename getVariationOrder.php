@@ -10,6 +10,7 @@ require_once('util.php');
 require_once('class/getOrderRequestModel.php');
 require_once('class/orderSearchModel.php');
 require_once('class/userAuthModel.php');
+require_once('class/orderVariationItem.php');
 
 ini_set('xdebug.var_display_max_children', -1);
 ini_set('xdebug.var_display_max_data', -1);
@@ -32,10 +33,9 @@ if(empty($queryOrderNumber)) {
   $endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
   $endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
   $startDate = clone $endDate;
-  $startDate->modify('-3 day'); // 30日前を開始に
+  $startDate->modify('-30 day'); // 30日前を開始に
   $orderSearchModel->startDate = $startDate->format("Y-m-d");
   $orderSearchModel->endDate = $endDate->format("Y-m-d");
-  $orderSearchModel->settlement = 'クレジットカード';
   //受注検索モデルを受注情報にセット
   $orderRequestModel->orderSearchModel = $orderSearchModel;
 } else {
@@ -46,6 +46,40 @@ if(empty($queryOrderNumber)) {
 
 // 楽天へRMS APIを使って送信
 list($request, $httpStatusCode, $response) = getOrder($orderRequestModel);
+
+// 受注の詳細を取得
+// レスポンスを整形してオブジェクトに
+$response = str_ireplace("S:", "", $response);
+$response = str_ireplace("ns2:", "", $response);
+$xml = simplexml_load_string($response);
+$responseObject = $xml->Body->getOrderResponse->return;
+$order_models = SimpleXMLElementArrayToArray($responseObject->orderModel);
+
+// 受注した商品を取得
+$items = array();
+foreach ($order_models as $order_model) {
+  $item_models = $order_model['packageModel']['itemModel'];
+  if( isset( $item_models[0] ) ) {
+      // 一つの受注で複数商品存在する場合
+      $items = $item_models;
+  } else {
+      // 一つの受注で一つの商品のみの場合
+      $items[] = $item_models;
+  }
+}
+
+// バリエーション商品だった場合、情報を格納
+$order_variation_items = array();
+foreach ($items as $item) {
+  if( $item['normalItemModel']['inventoryType'] == 2 ) {
+    // 項目選択肢在庫の場合
+    $item_code = (string) $item['itemNumber'];
+    $selectedChoice = $item['selectedChoice'];
+    $order_variation_item = new OrderVatiationItem($item_code, $selectedChoice);
+    $order_variation_items[] = $order_variation_item;
+  }
+}
+
 
 //////////////// 関数群 ////////////////////
 
@@ -184,7 +218,7 @@ function _convertClassObjectToArray($object) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>getOrder | OrderAPI</title>
+    <title>getOrder | OrderAPI 項目選択肢在庫</title>
     <meta charset="UTF-8">
     <style>
       pre,code {
@@ -206,11 +240,23 @@ function _convertClassObjectToArray($object) {
       <pre>
         <?php customVarDump($httpStatusCode); ?>
       </pre>
+      <h2>項目選択肢在庫の注文情報</h2>
+      <pre>
+        <?php
+          echo print_r($order_variation_items, true);
+        ?>
+      </pre>
       <h2>生レスポンス</h2>
       <pre>
         <?php 
           echo htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
           ?>
+      </pre>
+      <h2>受注情報全体のオブジェクト</h2>
+      <pre>
+        <?php 
+          echo print_r($order_models, true);
+        ?>
       </pre>
     </div>
   </body>

@@ -13,7 +13,7 @@ ini_set('xdebug.var_display_max_depth', -1);
 $queryOrderNumber = $_GET[num];
 if(empty($queryOrderNumber)) {
 // オーソリキャンセルしたい受注番号を入力
-  $orderNumber = "338459-20180615-00000818";
+  $orderNumber = "";
 } else {
   $orderNumber = $queryOrderNumber;
 }

@@ -144,3 +144,13 @@ function returnFormattedXmlString ($xmlString) {
 	// 文字列で取得
 	return $dom->saveXML();
 }
+
+// SimpleXMLElement Objectをarrayに変換する
+function SimpleXMLElementArrayToArray($xmlArray) {
+    $array = array();
+    foreach ( $xmlArray as $value) {
+        $json = json_encode($value);
+        $array[] = json_decode($json,TRUE);
+    }
+    return $array;
+}

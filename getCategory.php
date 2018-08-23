@@ -3,11 +3,12 @@
 require_once('config.php');
 require_once('util.php');
 
-$conditions = array(
-  'categorySetManageNumber' => null, //メガショッププランかつカテゴリセットを登録済みの場合は必須
-); // クエリを入力
+$categoryId = 1;
+if($_GET[num]) {
+  $categoryId = $_GET[num];
+}
 
-list($httpStatusCode, $response) = getCategories($conditions);
+list($httpStatusCode, $response) = getCategory($categoryId);
 $xml = simplexml_load_string($response);
 $status = $xml->status;
 if( $status->message != "OK") {
@@ -15,7 +16,7 @@ if( $status->message != "OK") {
 }
 $responseObject = $xml->categoriesGetResult;
 $categories = $responseObject->categoryList;
-// var_dump($categories);
+var_dump($categories);
 
 /***
  * shop.categories.get APIを使って、登録しているカテゴリセットの一覧を取得することができます。
@@ -55,22 +56,14 @@ $categories = $responseObject->categoryList;
 </result>
 
  * */
-function getCategories($conditions) {
+function getCategory($categoryId) {
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
   $header = array(
     "Content-Type: text/xml;charset=UTF-8",
     "Authorization: ESA {$authkey}",
   );
 
-  $url = RMS_API_CATEGORIES_GET . "?";
-  foreach($conditions as $key => $value) {
-    if(!is_null($value)) {
-      // 条件が設定されていればクエリに追加
-      $url .= "{$key}={$value}" . "&";
-    }
-  }
-  $url = substr($url, 0, -1); // 末尾の「&」を削除
-  customVarDump($url);
+  $url = RMS_API_CATEGORY_GET . "?categoryId=". $categoryId;
   
   $ch = curl_init($url);
 

@@ -10,7 +10,12 @@ ini_set('xdebug.var_display_max_data', -1);
 ini_set('xdebug.var_display_max_depth', -1);
 
 // リクエスト結果を見たいリクエストIDを入力
-$requestIds = array(174355113);
+$queryRequestId = $_GET[num];
+if(empty($queryRequestId)) {
+  $requestIds = array(174355113);
+} else {
+  $requestIds = array($queryRequestId);
+}
 
 /***
  * リクエスト結果を取得 getRCCSResult [同期]
@@ -80,7 +85,7 @@ function getRCCSResult($requestIds) {
   // customVarDump($client->__getLastRequest());
   // customVarDump($client->__getLastResponse());
   
-  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $result);
+  return array($client->__getLastRequest(), extract_response_http_code($client->__getLastResponseHeaders()), $client->__getLastResponse());
 }
 
 // エラーハンドラ関数
@@ -130,7 +135,8 @@ function _convertClassObjectToArray($object) {
       <h2>生レスポンス</h2>
       <pre>
         <?php 
-          echo customVarDump($response);
+          // echo customVarDump($response);
+          echo htmlspecialchars(returnFormattedXmlString($response), ENT_QUOTES);
           ?>
       </pre>
     </div>
