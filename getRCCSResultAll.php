@@ -122,7 +122,7 @@ function _convertClassObjectToArray($object) {
 <!DOCTYPE html>
 <html>
   <head>
-    <title>getRCCSResult | PaymentAPI</title>
+    <title>getRCCSResultAll | PaymentAPI</title>
     <meta charset="UTF-8">
     <style>
       pre,code {
