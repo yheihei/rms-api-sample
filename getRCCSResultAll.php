@@ -11,13 +11,13 @@ ini_set('xdebug.var_display_max_depth', -1);
 
 // リクエスト結果を見たい条件を作成
 $uiRCCSResultSearchModel = new UiRCCSResultSearchModel();
-$uiRCCSResultSearchModel->cardStatus = 22;
+$uiRCCSResultSearchModel->cardStatus = -1; // 特定のカードステータスを検索条件に指定しない場合は「-1：指定なし」
 
 $endDate = new DateTime('now');
 $endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
 $endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
 $startDate = clone $endDate;
-$startDate->modify('-30 day'); // 30日前を開始に
+$startDate->modify('-3 day'); // 開始日をいつにするか
 $uiRCCSResultSearchModel->fromDate = $startDate->format("Y-m-d");
 $uiRCCSResultSearchModel->toDate = $endDate->format("Y-m-d");
 
@@ -49,7 +49,7 @@ POST例は下記。本例ではSOAPクライアントを使っているが、自
       </ns2:userAuthModel>
       <ns2:uiRCCSResultSearchModel>
         <ns1:brandName xsi:nil="true"/>
-        <ns1:cardStatus>22</ns1:cardStatus>
+        <ns1:cardStatus>-1</ns1:cardStatus>
         <ns1:fromDate>2018-07-29</ns1:fromDate>
         <ns1:helpItem xsi:nil="true"/>
         <ns1:orderNumber xsi:nil="true"/>

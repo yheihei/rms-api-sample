@@ -459,3 +459,114 @@ class stdClass#3 (1) {
 }
 
 ```
+
+
+## getRCCSResultAll.php
+getRCCSResultAllのAPIを叩いて、ブラウザ上にリクエストと結果を表示  
+決済API全般の非同期APIの処理結果を期間を指定して取得する。
+例えばクレジットカード決済の決済履歴なんかに使用できる。
+getRCCSResultで一つ一つやるよりは、手間がかからなくなる。
+
+例えば、下記のような形で返却される。UiRCCSResultModelに1操作の結果が入ってくる。
+
+```
+
+<?xml version="1.0" encoding="UTF-8"?>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+  <S:Body>
+    <ns2:getRCCSResultAllResponse xmlns:ns2="http://orderapi.rms.rakuten.co.jp/rccsapi-services/RCCSAPI" xmlns:ns3="java:jp.co.rakuten.rms.mall.rccsapi.model.entity" xmlns:ns4="java:language_builtins">
+      <ns2:result>
+        <errorCode>RCCS_N00-000</errorCode>
+        <message>正常終了</message>
+        <rccsResults>
+          <ns3:UiRCCSResultModel>
+            <ns3:approvalNumber>4730007</ns3:approvalNumber>
+            <ns3:brandName>VISA</ns3:brandName>
+            <ns3:cardImstCount>0</ns3:cardImstCount>
+            <ns3:cardNo>****-****-****-6941</ns3:cardNo>
+            <ns3:cardStatus>12</ns3:cardStatus>
+            <ns3:ccsErrorCode>000000</ns3:ccsErrorCode>
+            <ns3:ccsErrorCodeDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <ns3:companyName>楽天カード</ns3:companyName>
+            <ns3:errorCode>RCCS_N00-000</ns3:errorCode>
+            <ns3:eventDate>2018-08-28T00:00:00+09:00</ns3:eventDate>
+            <ns3:expYM>2020/03</ns3:expYM>
+            <ns3:helpItem/>
+            <ns3:message>正常終了</ns3:message>
+            <ns3:orderNumber>338459-20180822-00001731</ns3:orderNumber>
+            <ns3:ownerName>TARO RAKUTEN</ns3:ownerName>
+            <ns3:payType>0</ns3:payType>
+            <ns3:price>108</ns3:price>
+            <ns3:regDate>2018-08-28T20:53:33+09:00</ns3:regDate>
+            <ns3:transactionId>18082820532116900185873503000700</ns3:transactionId>
+          </ns3:UiRCCSResultModel>
+          <ns3:UiRCCSResultModel>
+            <ns3:approvalNumber>0000000</ns3:approvalNumber>
+            <ns3:brandName>JCB</ns3:brandName>
+            <ns3:cardImstCount>0</ns3:cardImstCount>
+            <ns3:cardNo>****-****-****-3623</ns3:cardNo>
+            <ns3:cardStatus>42</ns3:cardStatus>
+            <ns3:ccsErrorCode>000000</ns3:ccsErrorCode>
+            <ns3:ccsErrorCodeDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <ns3:companyName>楽天カード</ns3:companyName>
+            <ns3:errorCode>RCCS_N00-000</ns3:errorCode>
+            <ns3:eventDate>2018-08-28T00:00:00+09:00</ns3:eventDate>
+            <ns3:expYM>2020/03</ns3:expYM>
+            <ns3:helpItem/>
+            <ns3:message>正常終了</ns3:message>
+            <ns3:orderNumber>338459-20180828-00001831</ns3:orderNumber>
+            <ns3:ownerName>TARO RAKUTEN</ns3:ownerName>
+            <ns3:payType>0</ns3:payType>
+            <ns3:price>108</ns3:price>
+            <ns3:regDate>2018-08-28T20:06:31+09:00</ns3:regDate>
+            <ns3:transactionId>18082820055403600185772700000000</ns3:transactionId>
+          </ns3:UiRCCSResultModel>
+          <ns3:UiRCCSResultModel>
+            <ns3:approvalNumber>0000000</ns3:approvalNumber>
+            <ns3:brandName>JCB</ns3:brandName>
+            <ns3:cardImstCount>0</ns3:cardImstCount>
+            <ns3:cardNo>****-****-****-3623</ns3:cardNo>
+            <ns3:cardStatus>42</ns3:cardStatus>
+            <ns3:ccsErrorCode>000000</ns3:ccsErrorCode>
+            <ns3:ccsErrorCodeDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <ns3:companyName>楽天カード</ns3:companyName>
+            <ns3:errorCode>RCCS_N00-000</ns3:errorCode>
+            <ns3:eventDate>2018-08-28T00:00:00+09:00</ns3:eventDate>
+            <ns3:expYM>2020/03</ns3:expYM>
+            <ns3:helpItem/>
+            <ns3:message>正常終了</ns3:message>
+            <ns3:orderNumber>338459-20180828-00003826</ns3:orderNumber>
+            <ns3:ownerName>TARO RAKUTEN</ns3:ownerName>
+            <ns3:payType>0</ns3:payType>
+            <ns3:price>108</ns3:price>
+            <ns3:regDate>2018-08-28T20:20:31+09:00</ns3:regDate>
+            <ns3:transactionId>18082820195509400185797200000000</ns3:transactionId>
+          </ns3:UiRCCSResultModel>
+          <ns3:UiRCCSResultModel>
+            <ns3:approvalNumber>0000000</ns3:approvalNumber>
+            <ns3:brandName>JCB</ns3:brandName>
+            <ns3:cardImstCount>0</ns3:cardImstCount>
+            <ns3:cardNo>****-****-****-3623</ns3:cardNo>
+            <ns3:cardStatus>42</ns3:cardStatus>
+            <ns3:ccsErrorCode>000000</ns3:ccsErrorCode>
+            <ns3:ccsErrorCodeDetail xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"/>
+            <ns3:companyName>楽天カード</ns3:companyName>
+            <ns3:errorCode>RCCS_N00-000</ns3:errorCode>
+            <ns3:eventDate>2018-08-30T00:00:00+09:00</ns3:eventDate>
+            <ns3:expYM>2020/03</ns3:expYM>
+            <ns3:helpItem/>
+            <ns3:message>正常終了</ns3:message>
+            <ns3:orderNumber>338459-20180830-00003719</ns3:orderNumber>
+            <ns3:ownerName>TARO RAKUTEN</ns3:ownerName>
+            <ns3:payType>0</ns3:payType>
+            <ns3:price>216</ns3:price>
+            <ns3:regDate>2018-08-30T11:10:24+09:00</ns3:regDate>
+            <ns3:transactionId>18083011095267800185087800000000</ns3:transactionId>
+          </ns3:UiRCCSResultModel>
+        </rccsResults>
+      </ns2:result>
+    </ns2:getRCCSResultAllResponse>
+  </S:Body>
+</S:Envelope>
+
+```
