@@ -15,6 +15,7 @@ class Item
   public $descriptionForPC;
   public $descriptionForMobile;
   public $descriptionForSmartPhone;
+  public $tagIds;
   public $catchCopyForPC;
   public $catchCopyForMobile;
   public $isIncludedPostage;

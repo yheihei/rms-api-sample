@@ -25,8 +25,8 @@ ini_set('xdebug.var_display_max_depth', -1);
 $item = new Item();
 
 // 商品管理番号(商品URL)、商品番号、商品名、販売価格
-// $item->itemUrl = 'testrrrz_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');;
-$item->itemUrl = 'kkbrmspro0861-000034';
+$item->itemUrl = 'testrrrz_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');;
+// $item->itemUrl = 'kkbrmspro0861-000034';
 $item->itemNumber = $item->itemUrl;
 $item->itemName = 'テスト商品につき購入不可_' . $item->itemUrl;
 $item->itemPrice = 120; 
@@ -95,6 +95,8 @@ $item->isIncludedPostage = 0; // 送料無料フラグ (0:送料別 1:送料込)
 $item->postage = 108; // 個別送料
 $item->isIncludedCashOnDeliveryPostage = 1; // 1:代引料込 (デフォルト0:代引き料別)
 
+// タグID設定
+$item->tagIds = array('tagId' => 9000001); // ex. 9000001 は 中古タグ
 
 // 楽天へRMS APIを使って登録
 list($reqXml, $httpStatusCode, $response) = insertItem($item);
@@ -167,11 +169,13 @@ function _createRequestXml($item) {
  * @param array $parentKeyName (その要素が配列で、子要素を親要素の単数形にして登録したい時指定)
  */
 function _arrayToXml($array, &$xml, $parentKeyName=null){
+  // var_dump($array);
   foreach ($array as $key => $value) {
     if(is_array($value)){
       if(is_int($key)){
           if(!empty($parentKeyName)) {
             // 親要素が存在する時、子要素を親要素の単数形の名前にして登録
+            // var_dump($parentKeyName);
             $key = singularByPlural($parentKeyName);
           }
       }
@@ -216,7 +220,8 @@ function _convertClassObjectToArray($object) {
     <div style="width:100%;">
       <h1>リクエスト</h1>
       <pre>
-        <?php echo htmlspecialchars(returnFormattedXmlString($reqXml), ENT_QUOTES);; ?>
+        <?php echo $reqXml;
+        //echo htmlspecialchars(returnFormattedXmlString($reqXml), ENT_QUOTES);; ?>
       </pre>
       <h1>レスポンス結果</h1>
       <h2>HTTP Status code</h2>

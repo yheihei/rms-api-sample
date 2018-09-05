@@ -11,6 +11,7 @@ function randomStr($length = 8)
 /* http://pb-times.jp/P_527b395742f17
 **/
 $irregular_rules = array(
+	'tagIds' => 'tagId',
 	'men'		=>	'man',
 	'seamen'	=>	'seaman',
 	'snowmen'	=>	'snowman',
