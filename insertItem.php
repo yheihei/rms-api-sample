@@ -96,7 +96,7 @@ $item->postage = 108; // 個別送料
 $item->isIncludedCashOnDeliveryPostage = 1; // 1:代引料込 (デフォルト0:代引き料別)
 
 // タグID設定
-$item->tagIds = array('tagId' => 9000001); // ex. 9000001 は 中古タグ
+$item->tagIds = array(9000001, 9000002); // ex. 9000001 は 中古タグ
 
 // 楽天へRMS APIを使って登録
 list($reqXml, $httpStatusCode, $response) = insertItem($item);
@@ -171,6 +171,16 @@ function _createRequestXml($item) {
 function _arrayToXml($array, &$xml, $parentKeyName=null){
   // var_dump($array);
   foreach ($array as $key => $value) {
+    // 特定タグの場合の挙動
+    if((string)$key === 'tagIds') {
+      var_dump($key);
+      $tagIds = $value;
+      $tagIdXml = $xml->addChild('tagIds');
+      foreach ($tagIds as $tagId) {
+        $tagIdXml->addChild('tagId', $tagId);
+      }
+      continue;
+    }
     if(is_array($value)){
       if(is_int($key)){
           if(!empty($parentKeyName)) {
