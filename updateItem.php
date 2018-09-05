@@ -20,7 +20,7 @@ ini_set('xdebug.var_display_max_depth', -1);
 $item = new Item();
 
 // 商品管理番号(商品URL)、商品番号、商品名、販売価格
-$item->itemUrl = '7jfisbuy';
+$item->itemUrl = 'testrrrz_9yi_20180905141953';
 // $item->itemNumber = $item->itemUrl;
 // $item->itemName = 'テスト商品につき購入不可_' . $item->itemUrl;
 $item->itemPrice = rand(100, 200); 
@@ -88,6 +88,10 @@ $item->catchCopyForMobile = 'モバイル用キャッチコピー' . '_' . date_
 $item->isIncludedPostage = 0; // 送料無料フラグ (0:送料別 1:送料込)
 $item->postage = rand(100, 200); // 個別送料
 $item->isIncludedCashOnDeliveryPostage = 1; // 1:代引料込 (デフォルト0:代引き料別)
+
+// タグID設定
+// $item->tagIds = array(9000001, 9000002); // ex. 9000001 は 中古タグ
+$item->tagIds = array(); // 消す時は空で設定
 
 
 // 楽天へRMS APIを使って登録
@@ -161,6 +165,16 @@ function _createRequestXml($item) {
  */
 function _arrayToXml($array, &$xml, $parentKeyName=null){
   foreach ($array as $key => $value) {
+    // 特定タグの場合の挙動
+    if((string)$key === 'tagIds') {
+      var_dump($key);
+      $tagIds = $value;
+      $tagIdXml = $xml->addChild('tagIds');
+      foreach ($tagIds as $tagId) {
+        $tagIdXml->addChild('tagId', $tagId);
+      }
+      continue;
+    }
     if(is_array($value)){
       if(is_int($key)){
           if(!empty($parentKeyName)) {
