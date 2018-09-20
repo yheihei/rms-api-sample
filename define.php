@@ -27,6 +27,7 @@ define("RMS_API_CATEGORY_DELETE", 'https://api.rms.rakuten.co.jp/es/1.0/category
 define("RMS_API_RAKUTEN_PAY_GET_ORDER", 'https://api.rms.rakuten.co.jp/es/2.0/order/getOrder/');
 define("RMS_API_RAKUTEN_PAY_SEARCH_ORDER", 'https://api.rms.rakuten.co.jp/es/2.0/order/searchOrder/');
 define("RMS_API_RAKUTEN_PAY_CONFIRM_ORDER", 'https://api.rms.rakuten.co.jp/es/2.0/order/confirmOrder/');
+define("RMS_API_RAKUTEN_PAY_UPDATE_ORDER_DELIVERY", 'https://api.rms.rakuten.co.jp/es/2.0/order/updateOrderDelivery/');
 
 // 商品登録(ItemAPI)設定関連
 define("RMS_CATALOG_EXCEPTION_REASON_NO_JAN", 5);
