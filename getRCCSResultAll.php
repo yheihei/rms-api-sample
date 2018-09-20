@@ -17,7 +17,7 @@ $endDate = new DateTime('now');
 $endDate->setTimeZone( new DateTimeZone('Asia/Tokyo'));
 $endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
 $startDate = clone $endDate;
-$startDate->modify('-3 day'); // 開始日をいつにするか
+$startDate->modify('-30 day'); // 開始日をいつにするか
 $uiRCCSResultSearchModel->fromDate = $startDate->format("Y-m-d");
 $uiRCCSResultSearchModel->toDate = $endDate->format("Y-m-d");
 

@@ -3,39 +3,26 @@
 require_once('config.php');
 require_once('util.php');
 
-$orderNumber = 1;
+$orderNumber = '123456-20180101-00111801';
 if($_GET[num]) {
   $orderNumber = $_GET[num];
 }
 
-$orderNumberList = array($orderNumber);
+$deliveryName = '宅配便';
 
-$dateType = 1; // 期間検索種別
+if($_GET[deliveryName]) {
+  $deliveryName = $_GET[deliveryName];
+}
 
-// 期間指定
-$endDate = new DateTime('now');
-$endDate->setTimeZone( new DateTimeZone('UTC'));
-$endDate->modify('+1 day'); // 現在時刻の次の日を終了時刻に
-$startDate = clone $endDate;
-$startDate->modify('-30 day'); // 30日前を開始に
-$startDateTime = $startDate->format("Y-m-d\TH:i:s+0900");
-$endDateTime = $endDate->format("Y-m-d\TH:i:s+0900");
-
-// var_dump($startDateTime);
-// var_dump($endDateTime);
-
-// 取得したいオーダーステータス
-$orderProgressList = [ 100, 200, 300, 400 ];
-
-list($httpStatusCode, $response) = searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList);
+list($httpStatusCode, $response) = updateOrderDelivery($orderNumber, $deliveryName);
 
 /***
- * RakutenPayOrderAPI searchOrder APIを使って、楽天ペイ注文の「注文情報の取得」を行うことができます。
+ * RakutenPayOrderAPI updateOrderDelivery APIを使って、楽天ペイ注文の「配送方法の更新」を行うことができます。
  * サンプルレスポンスは下記
 
 
  * */
-function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList) {
+function updateOrderDelivery($orderNumber, $deliveryName) {
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
   $header = array(
     'Content-Type: application/json; charset=utf-8',
@@ -43,13 +30,11 @@ function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList
   );
   
   $requestJson = json_encode([
-      'dateType' => $dateType,//期間検索種別
-      'startDatetime' => $startDateTime,//検索対象期間先頭日時
-      'endDatetime' => $endDateTime,//検索対象エンド点
-      'orderProgressList'=> $orderProgressList,//取得したいオーダーステータス
-  ]);
+      'orderNumber' => $orderNumber,
+      'deliveryName' => $deliveryName,
+  ], JSON_UNESCAPED_UNICODE); // 日本語文字列を含む場合ユニコードにするとエラーとなるため、ユニコードにしないオプション
 
-  $url = RMS_API_RAKUTEN_PAY_SEARCH_ORDER;
+  $url = RMS_API_RAKUTEN_PAY_UPDATE_ORDER_DELIVERY;
   
   $ch = curl_init($url);
 
@@ -77,7 +62,7 @@ function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList
 <!DOCTYPE html>
 <html>
   <head>
-    <title>searchOrder | RakutenPayOrderAPI</title>
+    <title>updateOrderDelivery | RakutenPayOrderAPI</title>
     <meta charset="UTF-8">
     <style>
       pre,code {

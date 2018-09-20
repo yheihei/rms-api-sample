@@ -171,6 +171,8 @@ $orderModel->settlementModel = $settlementModel;
 // 送付先モデルを設定(更新如何に関わらず必須項目)
 $packageModel = new PackageModel();
 $packageModel->basketId = 1647839462; // 通常注文、オークション注文の場合、指定が必要。
+$packageModel->shippingNumber = 1111;
+$packageModel->deliveryCompanyId = 1001;
 // 送付者情報モデルを設定(更新如何に関わらず必須項目)
 $senderModel = new PersonModel();
 $senderModel->zipCode1 = "158";
