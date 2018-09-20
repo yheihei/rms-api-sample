@@ -25,8 +25,8 @@ ini_set('xdebug.var_display_max_depth', -1);
 $item = new Item();
 
 // 商品管理番号(商品URL)、商品番号、商品名、販売価格
-$item->itemUrl = 'testrrrz_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');;
-// $item->itemUrl = 'kkbrmspro0861-000034';
+// $item->itemUrl = 'testrrrz_' . randomStr(3) . '_' . date_format(new DateTime('now', new DateTimeZone('Asia/Tokyo')), 'YmdHis');;
+$item->itemUrl = 'testrrrz_9yi_20180905141953';
 $item->itemNumber = $item->itemUrl;
 $item->itemName = 'テスト商品につき購入不可_' . $item->itemUrl;
 $item->itemPrice = 120; 
@@ -50,7 +50,7 @@ $item->isDepot = 1; // true(1)で倉庫行き、false(0)で販売中
 
 // ポイント倍率設定
 $point = new Point();
-$point->pointRate = 2; //変倍率
+$point->pointRate = 4; //変倍率
 $pointRateStart = new DateTime('now');
 $pointRateStart->modify('+2 hours +30 minutes'); //現在時刻から2時間30分後を変倍の開始に
 $pointRateStart->setTimeZone( new DateTimeZone('Asia/Tokyo'));

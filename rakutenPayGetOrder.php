@@ -80,7 +80,7 @@ function getOrder($orderNumberList) {
       <h2>生レスポンス</h2>
       <pre>
         <?php
-          var_dump($response);
+          echo print_r($response, true);
           ?>
       </pre>
     </div>
