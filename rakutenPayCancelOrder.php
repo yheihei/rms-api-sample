@@ -52,6 +52,7 @@ list($httpStatusCode, $response) = cancelOrder($orderNumber, $inventoryRestoreTy
 ・100: 注文確認待ち
 ・200: 楽天処理中
 ・300: 発送待ち
+また、発送日が登録されているためキャンセル申請できません。発送日を削除してから、再度キャンセル申請してください。
  * */
 function cancelOrder($orderNumber, $inventoryRestoreType, $changeReasonDetailApply) {
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
@@ -94,7 +95,7 @@ function cancelOrder($orderNumber, $inventoryRestoreType, $changeReasonDetailApp
 <!DOCTYPE html>
 <html>
   <head>
-    <title>getPayment | RakutenPayOrderAPI</title>
+    <title>cancelOrder | RakutenPayOrderAPI</title>
     <meta charset="UTF-8">
     <style>
       pre,code {
