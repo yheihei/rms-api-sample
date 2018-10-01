@@ -27,7 +27,7 @@ $endDateTime = $endDate->format("Y-m-d\TH:i:s+0900");
 // 取得したいオーダーステータス
 $orderProgressList = [ 100, 200, 300, 400 ];
 
-list($httpStatusCode, $response) = searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList);
+list($httpStatusCode, $response, $requestJson, $jsonResponse) = searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList);
 
 /***
  * RakutenPayOrderAPI searchOrder APIを使って、楽天ペイ注文の「注文情報の取得」を行うことができます。
@@ -66,10 +66,12 @@ function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList
   
   $httpStatusCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   
+  $jsonResponse = $response;
+  
   $response = json_decode( $response, true );
   
   curl_close($ch);
-  return array($httpStatusCode, $response);
+  return array($httpStatusCode, $response, $requestJson, $jsonResponse);
 }
 
 ?>
@@ -90,6 +92,12 @@ function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList
   </head>
   <body>
     <div style="width:100%;">
+      <h1>リクエスト</h1>
+      <pre>
+        <?php
+          echo print_r($requestJson, true);
+          ?>
+      </pre>
       <h1>レスポンス結果</h1>
       <h2>HTTP Status code</h2>
       <pre>
@@ -97,6 +105,9 @@ function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList
       </pre>
       <h2>生レスポンス</h2>
       <pre>
+        <?php
+          echo print_r($jsonResponse, true) . "\n\n";
+          ?>
         <?php
           echo print_r($response, true);
           ?>
