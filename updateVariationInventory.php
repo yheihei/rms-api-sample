@@ -103,7 +103,8 @@ function updateInventoryExternal($updateRequestExternalModel) {
   $userAuthModel = new ExternalUserAuthModel();
   $userAuthModel->authKey = "ESA " . base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
   $userAuthModel->shopUrl = RMS_SETTLEMENT_SHOP_URL;
-  $userAuthModel->userName  = RMS_SETTLEMENT_USER_NAME;
+  // $userAuthModel->userName  = RMS_SETTLEMENT_USER_NAME;
+  $userAuthModel->userName  = '';
   $params = array('externalUserAuthModel' => _convertClassObjectToArray($userAuthModel),
     'updateRequestExternalModel' => _convertClassObjectToArray($updateRequestExternalModel));
   // customVarDump($params);
@@ -186,6 +187,10 @@ function _convertClassObjectToArray($object) {
       <pre>
         <?php 
           echo customVarDump($response);
+          ?>
+          <?php
+            $hoge = ''.''.'';
+            echo $hoge;
           ?>
       </pre>
     </div>

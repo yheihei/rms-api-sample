@@ -28,7 +28,8 @@ function getOrder($orderNumberList) {
   );
   
   $requestJson = json_encode([
-      'orderNumberList' => $orderNumberList
+      'orderNumberList' => $orderNumberList,
+      'version' => 2
   ]);
 
   $url = RMS_API_RAKUTEN_PAY_GET_ORDER;
