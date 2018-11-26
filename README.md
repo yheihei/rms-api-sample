@@ -570,3 +570,19 @@ getRCCSResultで一つ一つやるよりは、手間がかからなくなる。
 </S:Envelope>
 
 ```
+
+# 楽天ペイ受注API（RakutenPayOrderAPI)
+
+RakutenPayOrderAPIは楽天ペイによる決済を可能にするAPI。
+従来は決済API（PaymentAPI）によるauthoriやsalese、受注API（OrderAPI）によるrBankAccountTransferなどのAPIで
+決済処理が必要だった。クレジットカード決済や、楽天バンク決済など決済方法に応じて複雑な処理が必要で大変使いにくいのが難点だった。
+
+楽天ペイ受注APIを使えば、決済方法を意識することなく、一括で決済処理を行うことができる。
+
+## 受注検索 searchOrder
+
+検索条件を指定して注文を検索し、ヒットした検索の注文番号リストを取得する。
+
+詳細解説記事はこちら  
+https://virusee.net/rms-api-authori/
+
