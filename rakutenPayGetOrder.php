@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * 詳細解説記事はこちら
+ * https://virusee.net/rms-rakutenpay-getorder/
+ * */
+
 require_once('config.php');
 require_once('util.php');
 
@@ -15,10 +20,9 @@ $orderNumberList = array($orderNumber);
 list($httpStatusCode, $response) = getOrder($orderNumberList);
 
 /***
- * RakutenPayOrderAPI searchOrder APIを使って、楽天ペイ注文の「注文情報の取得」を行うことができます。
- * サンプルレスポンスは下記
-
-
+ * RakutenPayOrderAPI getOrder APIを使って、楽天ペイ注文の「注文情報の取得」を行うことができます。
+ * 詳細解説記事はこちら
+ * https://virusee.net/rms-rakutenpay-getorder/
  * */
 function getOrder($orderNumberList) {
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);

@@ -584,5 +584,12 @@ RakutenPayOrderAPIは楽天ペイによる決済を可能にするAPI。
 検索条件を指定して注文を検索し、ヒットした検索の注文番号リストを取得する。
 
 詳細解説記事はこちら  
-https://virusee.net/rms-api-authori/
+https://virusee.net/rakuten-pay-search-order/
+
+## 受注取得 getOrder
+
+注文番号リストを指定して注文情報を取得する。
+
+詳細解説記事はこちら
+https://virusee.net/rms-rakutenpay-getorder/
 
