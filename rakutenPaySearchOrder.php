@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * 詳細解説記事はこちら
+ * https://virusee.net/rakuten-pay-search-order/
+ * */
+
 require_once('config.php');
 require_once('util.php');
 
@@ -31,9 +36,8 @@ list($httpStatusCode, $response, $requestJson, $jsonResponse) = searchOrder($dat
 
 /***
  * RakutenPayOrderAPI searchOrder APIを使って、楽天ペイ注文の「注文情報の取得」を行うことができます。
- * サンプルレスポンスは下記
-
-
+ * 詳細解説記事はこちら
+ * https://virusee.net/rakuten-pay-search-order/
  * */
 function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList) {
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
