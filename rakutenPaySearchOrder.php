@@ -30,16 +30,22 @@ $endDateTime = $endDate->format("Y-m-d\TH:i:s+0900");
 // var_dump($endDateTime);
 
 // 取得したいオーダーステータス
-$orderProgressList = [ 100, 200, 300, 400 ];
+$orderProgressList = [ 100, 200, 300, 400, 500, 600, 700, 800, 900 ];
 
-list($httpStatusCode, $response, $requestJson, $jsonResponse) = searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList);
+// 1リクエストで何件要求するか (デフォルト30件しかないので注意)
+$paginationRequestModel = [
+    'requestRecordsAmount' => 1000,
+    'requestPage' => 1,
+  ];
+
+list($httpStatusCode, $response, $requestJson, $jsonResponse) = searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList, $paginationRequestModel);
 
 /***
  * RakutenPayOrderAPI searchOrder APIを使って、楽天ペイ注文の「注文情報の取得」を行うことができます。
  * 詳細解説記事はこちら
  * https://virusee.net/rakuten-pay-search-order/
  * */
-function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList) {
+function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList, $paginationRequestModel) {
   $authkey = base64_encode(RMS_SERVICE_SECRET . ':' . RMS_LICENSE_KEY);
   $header = array(
     'Content-Type: application/json; charset=utf-8',
@@ -51,6 +57,7 @@ function searchOrder($dateType, $startDateTime, $endDateTime, $orderProgressList
       'startDatetime' => $startDateTime,//検索対象期間先頭日時
       'endDatetime' => $endDateTime,//検索対象エンド点
       'orderProgressList'=> $orderProgressList,//取得したいオーダーステータス
+      'PaginationRequestModel' => $paginationRequestModel // 取得したい件数など
   ]);
 
   $url = RMS_API_RAKUTEN_PAY_SEARCH_ORDER;
